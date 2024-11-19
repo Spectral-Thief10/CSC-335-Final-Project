@@ -30,5 +30,6 @@ public class testDiceSet {
         assertTrue(d2.get(1).equals(d3.get(1)));
         assertTrue(d2.get(2).equals(d3.get(2)));
         assertTrue(d2.get(4).equals(d3.get(4)));
+        assertTrue(d1.size()==d2.size() && d1.size()==d3.size());
     }
 }

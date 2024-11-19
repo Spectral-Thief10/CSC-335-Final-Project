@@ -29,11 +29,7 @@ public class DiceSet {
          */
 
         if (canRoll()) {
-            for (int i = 0; i < 5; i++){
-                this.dice.add(new Dice());
-            }
-
-            rolls -= 1;
+            rollDiceAt(new boolean[] {true, true, true, true, true});
         }
     }
 
@@ -48,9 +44,15 @@ public class DiceSet {
         assert indexes.length == 5;
 
         if (canRoll()) {
-            for (int i = 0; i < indexes.length; i++){
-                if (indexes[i]) {
-                    this.dice.add(i, new Dice());
+            if (rolls == 3) {
+                for (int i = 0; i < 5; i++){
+                    this.dice.add(new Dice());
+                }
+            } else {
+                for (int i = 0; i < indexes.length; i++){
+                    if (indexes[i]) {
+                        this.dice.set(i, new Dice());
+                    }
                 }
             }
     

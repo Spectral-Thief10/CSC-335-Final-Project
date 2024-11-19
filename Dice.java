@@ -15,7 +15,7 @@ public final class Dice implements Comparable<Dice> {
          */
 
         Random rnjesus = new Random(System.currentTimeMillis());
-        this.VALUE = (rnjesus.nextInt()%6)+1;
+        this.VALUE = (rnjesus.nextInt(0, 7));
     }
 
     public int compareTo(Dice other){
