@@ -14,8 +14,8 @@ public final class Dice implements Comparable<Dice> {
          * Access using .VALUE
          */
 
-        Random rnjesus = new Random(System.currentTimeMillis());
-        this.VALUE = (rnjesus.nextInt(0, 7));
+        Random rnjesus = new Random(System.currentTimeMillis()*hashCode());
+        this.VALUE = (rnjesus.nextInt(1, 7));
     }
 
     public int compareTo(Dice other){
@@ -36,6 +36,11 @@ public final class Dice implements Comparable<Dice> {
         // cast obj as a book and compare
         final Dice other = (Dice)obj;
 
-        return other.VALUE == this.VALUE;
+        return this.VALUE == other.VALUE;
+    }
+
+    @Override
+    public String toString(){
+        return Integer.toString(this.VALUE);
     }
 }

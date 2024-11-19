@@ -5,7 +5,6 @@
  */
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class DiceSet {
     private int rolls;
@@ -15,6 +14,9 @@ public class DiceSet {
         reset();
     }
 
+    public boolean hasResult(){
+        return dice.size() > 0;
+    }
     public boolean canRoll(){
         /*
          * @return boolean whether or not the dice set can still be rolled
@@ -35,7 +37,8 @@ public class DiceSet {
 
     public void rollDiceAt(boolean[] indexes){
         /*
-         * rolls dices at indexes indicated.
+         * rolls dices at indexes indicated. 
+         * if the diceset is empty, functions rolls all dice no matter the index.
          * 
          * @pre indexes.length == 5;
          * 
@@ -44,13 +47,13 @@ public class DiceSet {
         assert indexes.length == 5;
 
         if (canRoll()) {
-            if (rolls == 3) {
+            if (!hasResult()) {
                 for (int i = 0; i < 5; i++){
                     this.dice.add(new Dice());
                 }
             } else {
                 for (int i = 0; i < indexes.length; i++){
-                    if (indexes[i]) {
+                    if (indexes[i] == true) {
                         this.dice.set(i, new Dice());
                     }
                 }
@@ -85,7 +88,6 @@ public class DiceSet {
          */
 
         ArrayList<Dice> copy = new ArrayList<Dice>(this.dice);
-        Collections.sort(copy);
 
         return copy;
     }
