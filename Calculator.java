@@ -1,6 +1,9 @@
 /**
  * The Calculator class is going to calculate the score for each category.
  */
+
+import java.util.ArrayList;
+
 public class Calculator {
 
 	/*
@@ -9,20 +12,19 @@ public class Calculator {
 	 * 
 	 * @param dice is the array of the 5 dice
 	 * 
-	 * @param categoryval is the type of the category that we want to calculate
+	 * @param categoryVal is the dice face category to add up
 	 * 
 	 * @return its return the total
 	 **/
-	public int upperSectionCalculator(int[] dice, int categoryval) {
-		int total = 0;
-
-		for (int i = 0; i < dice.length; i++) {
-			if (dice[i] == categoryval) {
-				total += dice[i];
+	public static int upperCalculator(ArrayList<Dice> dice, int categoryVal) {
+		int sum = 0;
+		for (int i = 0; i < dice.size(); i++){
+			if (dice.get(i).VALUE == categoryVal) {
+				sum += dice.get(i).VALUE;
 			}
 		}
 
-		return total;
+		return sum;
 	}
 
 	/*
@@ -32,20 +34,20 @@ public class Calculator {
 	 * 
 	 * @return its return the total
 	 **/
-	public int threeOfAKindCalculator(int[] dice) {
+	public static int threeOfAKindCalculator(ArrayList<Dice> dice) {
 
-		for (int i = 0; i < dice.length; i++) {
+		for (int i = 0; i < dice.size(); i++) {
 
 			int count = 0;
-			for (int j = 0; j < dice.length; j++) {
-				if (dice[i] == dice[j]) {
+			for (int j = 0; j < dice.size(); j++) {
+				if (dice.get(i) == dice.get(j)) {
 					count++;
 				}
 			}
 			if (count >= 3) {
 				int total = 0;
-				for (int j = 0; j < dice.length; j++) {
-					total += dice[j];
+				for (int j = 0; j < dice.size(); j++) {
+					total = total + dice.get(j).VALUE;
 				}
 				return total;
 			}
@@ -60,20 +62,20 @@ public class Calculator {
 	 * 
 	 * @return its return the total
 	 **/
-	public int fourOfAKindCalculator(int[] dice) {
+	public static int fourOfAKindCalculator(ArrayList<Dice> dice) {
 
-		for (int i = 0; i < dice.length; i++) {
+		for (int i = 0; i < dice.size(); i++) {
 
 			int count = 0;
-			for (int j = 0; j < dice.length; j++) {
-				if (dice[i] == dice[j]) {
+			for (int j = 0; j < dice.size(); j++) {
+				if (dice.get(i) == dice.get(j)) {
 					count++;
 				}
 			}
 			if (count >= 4) {
 				int total = 0;
-				for (int j = 0; j < dice.length; j++) {
-					total += dice[j];
+				for (int j = 0; j < dice.size(); j++) {
+					total += dice.get(j).VALUE;
 				}
 				return total;
 			}
@@ -88,15 +90,15 @@ public class Calculator {
 	 * 
 	 * @return its return the total
 	 **/
-	public int fullHouseCalculator(int[] dice) {
+	public static int fullHouseCalculator(ArrayList<Dice> dice) {
 		boolean threeOfAKind = false;
 		boolean pair = false;
 
-		for (int i = 0; i < dice.length; i++) {
+		for (int i = 0; i < dice.size(); i++) {
 			int count = 0;
 
-			for (int j = 0; j < dice.length; j++) {
-				if (dice[i] == dice[j]) {
+			for (int j = 0; j < dice.size(); j++) {
+				if (dice.get(i) == dice.get(j)) {
 					count++;
 				}
 			}
@@ -121,11 +123,11 @@ public class Calculator {
 	 * 
 	 * @return its return the total
 	 **/
-	public int smallStraightCalculator(int[] dice) {
-		boolean[] number = new boolean[6];
+	public static int smallStraightCalculator(ArrayList<Dice> dice) {
+		boolean[] number = new boolean[5];
 
-		for (int i = 0; i < dice.length; i++) {
-			number[dice[i] - 1] = true;
+		for (int i = 0; i < dice.size(); i++) {
+			number[dice.get(i).VALUE - 1] = true;
 		}
 
 		if ((number[0] && number[1] && number[2] && number[3]) || (number[1] && number[2] && number[3] && number[4])
@@ -143,11 +145,11 @@ public class Calculator {
 	 * 
 	 * @return its return the total
 	 **/
-	public int largeStraightCalculator(int[] dice) {
-		boolean[] number = new boolean[6];
+	public static int largeStraightCalculator(ArrayList<Dice> dice) {
+		boolean[] number = new boolean[5];
 
-		for (int i = 0; i < dice.length; i++) {
-			number[dice[i] - 1] = true;
+		for (int i = 0; i < dice.size(); i++) {
+			number[dice.get(i).VALUE - 1] = true;
 		}
 
 		if ((number[0] && number[1] && number[2] && number[3]) && number[4]
@@ -165,13 +167,13 @@ public class Calculator {
 	 * 
 	 * @return its return the total
 	 **/
-	public int yahtzeeCalculator(int[] dice) {
+	public static int yahtzeeCalculator(ArrayList<Dice> dice) {
 
-		for (int i = 0; i < dice.length; i++) {
+		for (int i = 0; i < dice.size(); i++) {
 
 			int count = 0;
-			for (int j = 0; j < dice.length; j++) {
-				if (dice[i] == dice[j]) {
+			for (int j = 0; j < dice.size(); j++) {
+				if (dice.get(i) == dice.get(j)) {
 					count++;
 				}
 			}
@@ -189,11 +191,11 @@ public class Calculator {
 	 * 
 	 * @return its return the total
 	 **/
-	public int chanceCalculator(int[] dice) {
+	public static int chanceCalculator(ArrayList<Dice> dice) {
 		int total = 0;
 
-		for (int i = 0; i < dice.length; i++) {
-			total += dice[i];
+		for (int i = 0; i < dice.size(); i++) {
+			total += dice.get(i).VALUE;
 		}
 
 		return total;
