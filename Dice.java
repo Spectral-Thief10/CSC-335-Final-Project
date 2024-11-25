@@ -18,6 +18,21 @@ public final class Dice implements Comparable<Dice> {
         this.VALUE = (rnjesus.nextInt(1, 7));
     }
 
+    public Dice(int val){
+        /*
+         * Sets a dice with the given value. Primarily for testing.
+         * 
+         * @parameter: val, the value to set the dice
+         * 
+         * @pre val > 0 && val <= 6
+         * 
+         * @post accurate score calculation
+         */
+
+        assert val > 0 && val <= 6;
+        this.VALUE = val;
+    }
+
     public int compareTo(Dice other){
         return Integer.compare(this.VALUE, other.VALUE);
     }
