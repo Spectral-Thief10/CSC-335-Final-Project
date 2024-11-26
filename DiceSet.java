@@ -63,25 +63,6 @@ public class DiceSet {
         }
     }
 
-    public int sumDice(){
-        /*
-         * @return the sum of all the dice in the dice set
-         */
-
-        // dice set has not yet been rolled
-        if (this.rolls == 3) {
-            return 0;
-        }
-
-        int output = 0;
-
-        for (Dice d : this.dice) {
-            output += d.VALUE;
-        }
-
-        return output;
-    }
-
     public ArrayList<Dice> getResult(){
         /*
          * @return sorted ArrayList containing the current roll result. empty if not yet rolled.

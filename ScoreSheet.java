@@ -21,7 +21,7 @@ public class ScoreSheet {
 	 */
 
 	public ScoreSheet() {
-		categoryScores = new HashMap<>();
+		categoryScores = new HashMap<Category, Integer>();
 		for (Category category : Category.values()){
 			categoryScores.put(category, null);
 		}
@@ -33,7 +33,7 @@ public class ScoreSheet {
 	 * 
 	 * @param category that we want to update its score.
 	 * @param score    for that specific category.
-	 * @return true if the score was successfully updated, false if it not.
+	 * @return true if the score was successfully updated, false if it not (duplicate).
 	 */
 
 	public boolean setScoreCategory(Category category, ArrayList<Dice> dice) {
