@@ -1,6 +1,7 @@
 /**
  * The Calculator class is going to calculate the score for each category.
  */
+package model;
 
 import java.util.ArrayList;
 

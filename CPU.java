@@ -1,10 +1,13 @@
 
+import model.Player;
 import model.ScoreSheet.Category;
 
 public class CPU extends Player{
 	private Mode mode;
 	private Strategy strategy;
-	public CPU(Mode mode) {
+	private int id;
+	public CPU(Mode mode, int id) {
+		super(id);
 		this.mode = mode;
 		if(this.mode.ordinal() == Mode.EASY.ordinal()) {
 			strategy = new EasyMode(this);

@@ -3,6 +3,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import model.Calculator;
+import model.Dice;
+
 import java.util.ArrayList;
 
 public class TestCalculator {

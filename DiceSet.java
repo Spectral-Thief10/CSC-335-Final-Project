@@ -6,6 +6,8 @@
 
 import java.util.ArrayList;
 
+import model.Dice;
+
 public class DiceSet {
     private int rolls;
     private ArrayList<Dice> dice;
