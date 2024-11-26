@@ -17,6 +17,12 @@ public class TestCalculator {
 		assertEquals(4, Calculator.upperCalculator(dice, 4));
 		assertEquals(5, Calculator.upperCalculator(dice, 5));
 
+		ArrayList<Dice> dice2 = TestHelper.createResult(new int[] { 1, 1, 1, 3, 3 });
+
+		assertEquals(3, Calculator.upperCalculator(dice2, 1));
+		assertEquals(6, Calculator.upperCalculator(dice2, 3));
+		assertEquals(0, Calculator.upperCalculator(dice2, 4));
+		assertEquals(0, Calculator.upperCalculator(dice2, 5));
 	}
 
 	@Test

@@ -18,7 +18,7 @@ public class ScoreSheet {
 	}
 
 	/**
-	 * initialize all categories with the null score and false for the upperBonus
+	 * initialize all categories with the null score
 	 */
 
 	public ScoreSheet() {
@@ -45,30 +45,43 @@ public class ScoreSheet {
 			switch(category){
 				case ONE:
 					score = Calculator.upperCalculator(dice, 1);
+					break;
 				case TWO:
 					score = Calculator.upperCalculator(dice, 2);
+					break;
 				case THREE:
 					score = Calculator.upperCalculator(dice, 3);
+					break;
 				case FOUR:
 					score = Calculator.upperCalculator(dice, 4);
+					break;
 				case FIVE:
 					score = Calculator.upperCalculator(dice, 5);
+					break;
 				case SIX:
 					score = Calculator.upperCalculator(dice, 6);
+					break;
 				case THREE_OF_A_KIND:
 					score = Calculator.threeOfAKindCalculator(dice);
+					break;
 				case FOUR_OF_A_KIND:
 					score = Calculator.fourOfAKindCalculator(dice);
+					break;
 				case FULL_HOUSE:
 					score = Calculator.fullHouseCalculator(dice);
+					break;
 				case SMALL_STRAIGHT:
 					score = Calculator.smallStraightCalculator(dice);
+					break;
 				case LARGE_STRAIGHT:
 					score = Calculator.largeStraightCalculator(dice);
+					break;
 				case YAHTZEE:
 					score = Calculator.yahtzeeCalculator(dice);
+					break;
 				case CHANCE:
 					score = Calculator.chanceCalculator(dice);
+					break;
 			}
 			categoryScores.put(category, score);
 
@@ -117,6 +130,12 @@ public class ScoreSheet {
 	}
 
 	private int totalScoreForUpperSection() {
+		/*
+		 * Helper functions for hasBonus(), calculates score of upper section
+		 * 
+		 * @return total of upper section categories.
+		 */
+
 		int total = 0;
 		Category[] category = Category.values();
 		for (int i = 0; i < category.length; i++) {

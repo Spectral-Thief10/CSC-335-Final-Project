@@ -22,7 +22,7 @@ public class Calculator {
 		int sum = 0;
 		for (int i = 0; i < dice.size(); i++){
 			if (dice.get(i).VALUE == categoryVal) {
-				sum += dice.get(i).VALUE;
+				sum += categoryVal;
 			}
 		}
 
