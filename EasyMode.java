@@ -6,6 +6,7 @@ import model.ScoreSheet.Category;
 
 public class EasyMode implements Strategy{
 	private CPU cpu;
+
 	public EasyMode(CPU cpu) {
 		this.cpu = cpu;
 	}
@@ -70,9 +71,12 @@ public class EasyMode implements Strategy{
 			return rerolls;
 		}
 		if(highestCount == 4) {
-			int index = diceSet.indexOf(numWithHighCount);
-			rerolls[index] = true;
-			return rerolls;
+			for(int i = 1; i < diceSet.size();i++) {
+				if(diceSet.get(i).VALUE==diceSet.get(i-1).VALUE) {
+					rerolls[i]=true;
+					return rerolls;
+				}
+			}
 		}
 		int numWithSecondHighCount = 0;
 		int secondHighestCount = 0;
@@ -100,6 +104,68 @@ public class EasyMode implements Strategy{
 	@Override
 	public boolean[] straightRerolls(DiceSet dice, boolean[] rerolls) {
 		// TODO Auto-generated method stub
+		int highestStraight = 1;
+		int currentStraight = 1;
+		ArrayList<Dice> diceSet = dice.getResult();
+		
+		HashMap<Integer,ArrayList<Integer>> indexMap = new HashMap<>();
+		for(int i = 0; i < diceSet.size();i++) {
+			if(indexMap.containsKey(diceSet.get(i).VALUE)) {
+				indexMap.get(diceSet.get(i).VALUE).add(i);
+			}
+			else {
+				ArrayList<Integer> index = new ArrayList<>();
+				index.add(i);
+				indexMap.put(diceSet.get(i).VALUE,index);
+			}
+		}
+		Collections.sort(diceSet);
+		ArrayList<Integer> rerollNot = new ArrayList<>();
+		int fakeStraight = 1;
+		
+		for(int i = 1; i < diceSet.size();i++) {
+			int current = diceSet.get(i).VALUE;
+			int prev = diceSet.get(i-1).VALUE;
+			if(current == prev) {
+				fakeStraight++;
+			}
+			else if(current == prev+1) {
+				currentStraight++;
+				fakeStraight++;
+			}
+			
+			else {
+				fakeStraight = 1;
+				currentStraight = 1;
+			}
+			if(currentStraight > highestStraight) {
+				highestStraight = currentStraight;
+				rerollNot = new ArrayList<>();
+				for(int e = i; e > i-fakeStraight;e--) {
+					if(!rerollNot.contains(diceSet.get(e).VALUE)) {
+						rerollNot.add(diceSet.get(e).VALUE);
+					}
+					
+				}
+			}
+			
+		}
+		
+		ArrayList<Integer> rerollAt = new ArrayList<>();
+
+			for(int i : indexMap.keySet()) {
+				while(indexMap.get(i).size()>1) {
+					rerollAt.add(indexMap.get(i).remove(0));
+				}
+			}
+			for(int i : indexMap.keySet()) {
+				if(!rerollNot.contains(i)) {
+					rerollAt.add(indexMap.get(i).get(0));
+				}
+			}
+		for(int i : rerollAt) {
+			rerolls[i]=true;
+		}
 		return rerolls;
 	}
 	@Override
