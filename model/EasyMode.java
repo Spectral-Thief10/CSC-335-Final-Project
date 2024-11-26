@@ -1,10 +1,16 @@
+<<<<<<< HEAD:model/EasyMode.java
 package model;
+=======
+>>>>>>> 168e1cc77f72f383b588ac0374d1efd25786da68:EasyMode.java
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+<<<<<<< HEAD:model/EasyMode.java
 import DiceSet;
+=======
+>>>>>>> 168e1cc77f72f383b588ac0374d1efd25786da68:EasyMode.java
 import model.ScoreSheet.Category;
 
 public class EasyMode implements Strategy{
