@@ -6,14 +6,23 @@ import model.ScoreSheet.Category;
 
 public class EasyMode implements Strategy{
 	private CPU cpu;
-
-	public EasyMode(CPU cpu) {
+	private DiceSet dice;
+	public EasyMode(CPU cpu,DiceSet dice) {
 		this.cpu = cpu;
+		this.dice = dice;
 	}
 	public Category chooseCategory() {
 		return cpu.categoriesLeft().get(0);
 	}
-	
+	@Override
+	public boolean[] upperKindRerolls(DiceSet dice,boolean[]rerolls) {
+		for(int i = 0; i < dice.getResult().size();i++) {
+			if(dice.getResult().get(i).VALUE != cpu.getCategory().ordinal()+1) {
+				rerolls[i]=true;
+			}
+		}
+		return rerolls;
+	}
 	@Override
 	public boolean[] kindRerolls(DiceSet dice,boolean []rerolls) {
 		int[] numbers = {0,0,0,0,0,0};

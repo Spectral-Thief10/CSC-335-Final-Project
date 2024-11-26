@@ -7,4 +7,5 @@ public interface Strategy {
 	public boolean[] straightRerolls(DiceSet dice, boolean[] rerolls);
 	public boolean[] yahtzeeRerolls(DiceSet dice, boolean[] rerolls);
 	public boolean[] chanceRerolls(DiceSet dice, boolean[] rerolls);
+	public boolean[] upperKindRerolls(DiceSet dice, boolean[] rerolls);
 }

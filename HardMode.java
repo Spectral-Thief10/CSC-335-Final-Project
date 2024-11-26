@@ -6,10 +6,11 @@ import model.ScoreSheet.Category;
 
 public class HardMode implements Strategy{
 	private CPU cpu;
-
-	public HardMode(CPU cpu) {
+	private DiceSet dice;
+	public HardMode(CPU cpu,DiceSet dice) {
 		// TODO Auto-generated constructor stub
 		this.cpu = cpu;
+		this.dice = dice;
 	}
 
 	private Category category = Category.LARGE_STRAIGHT;
@@ -19,20 +20,121 @@ public class HardMode implements Strategy{
 		ArrayList<Category> left = cpu.categoriesLeft();
 		
 		if(category == Category.YAHTZEE) {
-			return category;
+			return Category.YAHTZEE;
 		}
 		else {
 			if(left.size()==1 && left.get(0)==Category.CHANCE) {
-				category = Category.CHANCE;
+				return Category.CHANCE;
 			}
 			else if(left.size()==1&&left.get(0)==Category.YAHTZEE) {
-				category = left.get(0);
+				return Category.YAHTZEE;
 			}
 			else {
-				
+				boolean[] rerolls = resetRerolls();
+				rerolls = this.straightRerolls(dice, rerolls);
+				if(loopThrough(rerolls)==true && left.contains(Category.LARGE_STRAIGHT)) {
+					return Category.LARGE_STRAIGHT;
+				}
+				rerolls = this.kindRerolls(dice, rerolls);
+				if(this.kindCount() == 1 && left.contains(Category.FOUR_OF_A_KIND)) {
+					return Category.FOUR_OF_A_KIND;
+				}
+				rerolls = resetRerolls();
+				rerolls = this.fullHouseRerolls(dice, rerolls);
+				if(loopThrough(rerolls)==true && left.contains(Category.FULL_HOUSE)) {
+					return Category.FULL_HOUSE;
+				}
+				rerolls = resetRerolls();
+				rerolls = this.straightRerolls(dice, rerolls);
+				if(this.smallStraight(rerolls) && left.contains(Category.SMALL_STRAIGHT)) {
+					return Category.SMALL_STRAIGHT;
+				}
+				rerolls = resetRerolls();
+				rerolls = this.kindRerolls(dice, rerolls);
+				if(this.kindCount()==2 && left.contains(Category.THREE_OF_A_KIND)) {
+					return Category.THREE_OF_A_KIND;
+				}
 			}
-			return Category.FULL_HOUSE;
+			return upperSectionChoice();
 		}
+	}
+	public Category upperSectionChoice() {
+		if(yahtzeeRoll()==true) {
+			return Category.YAHTZEE;
+		}
+	int[]numberCounts = this.countsOfNums(dice);
+	ArrayList<Category> left = cpu.categoriesLeft();
+	int highestCount = numberCounts[5];
+	for(int i = numberCounts.length-1;i>=0;i--) {
+		highestCount = numberCounts[i];
+		boolean check = true;
+		for(int e = numberCounts.length-1;e>=0;e--) {
+			if(numberCounts[e]>highestCount) {
+				check = false;
+			}
+		}
+		if(check == true) {
+			if(i == 5 && left.contains(Category.SIXE)) {
+				return Category.SIXE;
+			}
+			else if(i == 4 && left.contains(Category.FIVE)) {
+				return Category.FIVE;
+			}
+			else if(i == 3 && left.contains(Category.FOUR)) {
+				return Category.FOUR;
+			}
+			else if(i == 2 && left.contains(Category.THREE)) {
+				return Category.THREE;
+			}
+			else if(i == 1 && left.contains(Category.TWO)) {
+				return Category.TWO;
+			}
+			else if(i == 0 && left.contains(Category.ONE)) {
+				return Category.ONE;
+			}
+		}
+	}
+	return chooseRemainingCategory();
+	}
+	private Category chooseRemainingCategory() {
+		ArrayList<Category> left = cpu.categoriesLeft();
+		if(left.size()>0) {
+		return left.get(0);}
+		return Category.YAHTZEE;
+	}
+	public int[] countsOfNums(DiceSet dice) {
+		int[] numbers = {0,0,0,0,0,0};
+		this.dice = dice;
+		ArrayList<Dice> diceSet = this.dice.getResult();
+		for(int i = 0; i < diceSet.size();i++) {
+			numbers[diceSet.get(i).VALUE-1]=numbers[diceSet.get(i).VALUE-1]+1;
+		}
+		return numbers;
+	}
+	private int kindCount() {
+		int count = 0;
+		boolean[] rerolls = resetRerolls();
+		rerolls = this.kindRerolls(this.dice, rerolls);
+		for(int i = 0; i < rerolls.length;i++) {
+			if(rerolls[i]==true) {
+				count++;
+			}
+		}
+		return count;
+	}
+	private boolean[]resetRerolls() {
+		boolean[] rerolls = {false,false,false,false,false};
+		return rerolls;
+	}
+	
+	private boolean smallStraight(boolean[]rerolls) {
+		int differences = 0;
+		for(int i = 0; i < rerolls.length;i++) {
+			if(rerolls[i]==true) {
+				differences++;
+			}
+		}
+		return differences==1;
 	}
 	private boolean loopThrough(boolean[]rerolls) {
 		for(int i = 0; i < rerolls.length;i++) {
@@ -42,8 +144,19 @@ public class HardMode implements Strategy{
 		}
 		return true;
 	}
-	public boolean yahtzeeRoll(DiceSet dice) {
-		ArrayList<Dice> diceSet = dice.getResult();
+	
+	@Override
+	public boolean[] upperKindRerolls(DiceSet dice, boolean[]rerolls) {
+		this.dice = dice;
+		for(int i = 0; i < this.dice.getResult().size();i++) {
+			if(this.dice.getResult().get(i).VALUE != cpu.getCategory().ordinal()+1) {
+				rerolls[i]=true;
+			}
+		}
+		return rerolls;
+	}
+	public boolean yahtzeeRoll() {
+		ArrayList<Dice> diceSet = this.dice.getResult();
 		int first = diceSet.get(0).VALUE;
 		for(int i = 0; i < diceSet.size();i++) {
 			if(first != diceSet.get(i).VALUE) {
@@ -57,10 +170,11 @@ public class HardMode implements Strategy{
 	public boolean[] kindRerolls(DiceSet dice, boolean[] rerolls) {
 		// TODO Auto-generated method stub
 		int[] numbers = {0,0,0,0,0,0};
-		if(yahtzeeRoll(dice)) {
+		this.dice = dice;
+		if(yahtzeeRoll()) {
 			return rerolls;
 		}
-		ArrayList<Dice> diceSet = dice.getResult();
+		ArrayList<Dice> diceSet = this.dice.getResult();
 		for(int i = 0; i < rerolls.length;i++) {
 			numbers[diceSet.get(i).VALUE-1] = numbers[diceSet.get(i).VALUE-1]+1;
 		}
@@ -87,10 +201,11 @@ public class HardMode implements Strategy{
 	@Override
 	public boolean[] fullHouseRerolls(DiceSet dice, boolean[] rerolls) {
 		// TODO Auto-generated method stub
-		if(yahtzeeRoll(dice)) {
+		this.dice = dice;
+		if(yahtzeeRoll()) {
 			return rerolls;
 		}
-		ArrayList<Dice> diceSet = dice.getResult();
+		ArrayList<Dice> diceSet = this.dice.getResult();
 		HashMap<Integer,Integer> map = new HashMap<>();
 		HashMap<Integer,ArrayList<Integer>> indexMap = new HashMap<>();
 		for(int i = 0; i < diceSet.size();i++) {
@@ -161,12 +276,13 @@ public class HardMode implements Strategy{
 	@Override
 	public boolean[] straightRerolls(DiceSet dice, boolean[] rerolls) {
 		// TODO Auto-generated method stub
-		if(yahtzeeRoll(dice)) {
+		this.dice = dice;
+		if(yahtzeeRoll()) {
 			return rerolls;
 		}
 		int highestStraight = 1;
 		int currentStraight = 1;
-		ArrayList<Dice> diceSet = dice.getResult();
+		ArrayList<Dice> diceSet = this.dice.getResult();
 		
 		HashMap<Integer,ArrayList<Integer>> indexMap = new HashMap<>();
 		for(int i = 0; i < diceSet.size();i++) {
@@ -254,9 +370,10 @@ public class HardMode implements Strategy{
 	@Override
 	public boolean[] yahtzeeRerolls(DiceSet dice, boolean[] rerolls) {
 		// TODO Auto-generated method stub
+		this.dice = dice;
 		HashMap<Integer,Integer> map = new HashMap<>();
 		HashMap<Integer,ArrayList<Integer>> indexMap = new HashMap<>();
-		ArrayList<Dice> diceSet = dice.getResult();
+		ArrayList<Dice> diceSet = this.dice.getResult();
 		
 		for(int i = 0; i < diceSet.size();i++) {
 			if(map.containsKey(diceSet.get(i).VALUE)) {
@@ -295,10 +412,11 @@ public class HardMode implements Strategy{
 	@Override
 	public boolean[] chanceRerolls(DiceSet dice, boolean[] rerolls) {
 		// TODO Auto-generated method stub
-		if(yahtzeeRoll(dice)) {
+		this.dice = dice;
+		if(yahtzeeRoll()) {
 			return rerolls;
 		}
-		ArrayList<Dice> diceSet = dice.getResult();
+		ArrayList<Dice> diceSet = this.dice.getResult();
 		for(int i = 0; i < diceSet.size();i++) {
 			if(diceSet.get(i).VALUE!=6) {
 				rerolls[i]=true;

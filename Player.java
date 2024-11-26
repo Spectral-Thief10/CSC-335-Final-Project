@@ -1,6 +1,7 @@
-package model;
+
 import java.util.ArrayList;
 
+import model.ScoreSheet;
 import model.ScoreSheet.Category;
 
 public class Player {
@@ -13,7 +14,10 @@ public class Player {
 			categories.add(i);
 		}
 	}
-	public void putScore(Category category, int score) {
+	public int getScoreCategory(Category category) {
+		return scoreSheet.getScoreCategory(category);
+	}
+	public void setScore(Category category, int score) {
 		if(getIndexOf(category)!=-1) { // checks to see if the category is yet to be completed.
 										// sets the score for the category if it has not been completed
 			scoreSheet.setScoreCategory(category, score);
@@ -32,7 +36,7 @@ public class Player {
 	/*
 	 * @pre categories.getIndexOf(remove) != -1
 	 */
-	private boolean removeCategory(Category remove) {
+	public boolean removeCategory(Category remove) {
 		int index = getIndexOf(remove);
 		if(index != -1) {
 			categories.remove(index);
