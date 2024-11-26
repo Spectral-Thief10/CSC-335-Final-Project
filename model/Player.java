@@ -25,10 +25,13 @@ public class Player {
 		if(getIndexOf(category)!=-1) { // checks to see if the category is yet to be completed.
 										// sets the score for the category if it has not been completed
 			scoreSheet.setScoreCategory(category, score);
-			removeCategory(category);
+			
+				if(categoriesLeft().contains(Category.YAHTZEE) && category == Category.YAHTZEE) {
+					removeCategory(category);
+				}
+				else {
+			removeCategory(category);}
 		}
-		// does not do anything if the category has already been completed. Manage this in the view or game manager.
-		// the player must choose another category
 	}
 	public ArrayList<Category> categoriesLeft() {
 		ArrayList<Category> categories = new ArrayList<>();
