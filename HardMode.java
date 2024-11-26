@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import model.ScoreSheet;
+
 import model.ScoreSheet.Category;
 
 public class HardMode implements Strategy{

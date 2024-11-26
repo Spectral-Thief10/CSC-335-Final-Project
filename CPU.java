@@ -1,7 +1,6 @@
 
 
 
-import model.ScoreSheet;
 import model.ScoreSheet.Category;
 
 public class CPU extends Player{
