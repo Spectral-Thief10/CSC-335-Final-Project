@@ -1,62 +1,51 @@
-import java.util.ArrayList;
+
 
 import model.Player;
 import model.ScoreSheet.Category;
 
 public class CPU extends Player{
 	private Mode mode;
+	private DiceSet dice;
 	private Strategy strategy;
-	private int id;
-	public CPU(Mode mode, int id) {
-		super(id);
+	public CPU(Mode mode,DiceSet dice) {
+		super(0);
+		this.dice = dice;
 		this.mode = mode;
-		if(this.mode.ordinal() == Mode.EASY.ordinal()) {
-			strategy = new EasyMode(this);
+		if(this.mode == Mode.EASY) {
+			strategy = new EasyMode(this,dice);
 		}
-		else {
-			strategy = new HardMode(this);
+		if(this.mode==Mode.HARD){
+			strategy = new HardMode(this,dice);
 		}
 	}
-	public boolean perfectRoll(boolean[] roll) {
-		for(int i = 0; i < roll.length;i++) {
-			if(roll[i]==true) {
-				return false;
-			}
-		}
-		return true;
-	}
-	public boolean[] chooseUpperScoreRerolls(DiceSet dice) {
-		boolean[] rerolls = {false,false,false,false,false};
-		for(int i = 0; i < dice.getResult().size();i++) {
-			if(dice.getResult().get(i).VALUE != getCategory().ordinal()+1) {
-				rerolls[i]=true;
-			}
-		}
-		return rerolls;
-	}
-	public boolean[] chooseLowerScoreRerolls(DiceSet dice) {
+	public boolean[] chooseScoreRerolls(DiceSet dice) {
 		boolean[] rerolls = {false, false, false,false,false};
-		if(getCategory()==Category.THREE_OF_A_KIND) {
-			rerolls = strategy.kindRerolls(dice, rerolls);
+		this.dice = dice;
+		if(getCategory()==Category.ONE || getCategory()==Category.TWO || getCategory()==Category.THREE
+				||getCategory()==Category.FOUR || getCategory()==Category.FIVE || getCategory()==Category.SIX) {
+			rerolls = strategy.upperKindRerolls(this.dice,rerolls);
+		}
+		else if(getCategory()==Category.THREE_OF_A_KIND) {
+			rerolls = strategy.kindRerolls(this.dice, rerolls);
 		}
 		else if(getCategory()==Category.FOUR_OF_A_KIND) {
-			rerolls = strategy.kindRerolls(dice,rerolls);
+			rerolls = strategy.kindRerolls(this.dice,rerolls);
 			
 		}else if(getCategory()==Category.FULL_HOUSE) {
-			rerolls = strategy.fullHouseRerolls(dice,rerolls);
+			rerolls = strategy.fullHouseRerolls(this.dice,rerolls);
 			
 		}
 		else if(getCategory()==Category.SMALL_STRAIGHT){
-			rerolls = strategy.straightRerolls(dice,rerolls);
+			rerolls = strategy.straightRerolls(this.dice,rerolls);
 		}
 		else if(getCategory()==Category.LARGE_STRAIGHT) {
-			rerolls = strategy.straightRerolls(dice, rerolls);
+			rerolls = strategy.straightRerolls(this.dice, rerolls);
 		}
 		else if(getCategory()==Category.YAHTZEE) {
-			rerolls = strategy.yahtzeeRerolls(dice,rerolls);
+			rerolls = strategy.yahtzeeRerolls(this.dice,rerolls);
 		}
 		else {
-			rerolls = strategy.chanceRerolls(dice,rerolls);
+			rerolls = strategy.chanceRerolls(this.dice,rerolls);
 		}
 		return rerolls;
 		
