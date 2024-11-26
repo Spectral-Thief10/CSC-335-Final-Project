@@ -50,7 +50,7 @@ public class GameManager {
 			activePlayers.add(new Player(i));
 		}
 		
-		activePlayers.add(new CPU(gameMode,num+1));
+		activePlayers.add(new CPU(gameMode,num+1,diceSet));
 		currentPlayer = activePlayers.get(0);
 	}
 

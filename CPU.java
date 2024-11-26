@@ -7,8 +7,8 @@ public class CPU extends Player{
 	private Mode mode;
 	private DiceSet dice;
 	private Strategy strategy;
-	public CPU(Mode mode,DiceSet dice) {
-		super(0);
+	public CPU(Mode mode,int id ,DiceSet dice) {
+		super(id);
 		this.dice = dice;
 		this.mode = mode;
 		if(this.mode == Mode.EASY) {

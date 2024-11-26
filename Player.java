@@ -21,18 +21,6 @@ public class Player {
 	public int getScoreCategory(Category category) {
 		return scoreSheet.getScoreCategory(category);
 	}
-	public void setScore(Category category, ArrayList<Dice> score) {
-		if(getIndexOf(category)!=-1) { // checks to see if the category is yet to be completed.
-										// sets the score for the category if it has not been completed
-			scoreSheet.setScoreCategory(category, score);
-			
-				if(categoriesLeft().contains(Category.YAHTZEE) && category == Category.YAHTZEE) {
-					removeCategory(category);
-				}
-				else {
-			removeCategory(category);}
-		}
-	}
 	public ArrayList<Category> categoriesLeft() {
 		ArrayList<Category> categories = new ArrayList<>();
 		for(Category i : this.categories) {
@@ -62,6 +50,20 @@ public class Player {
 	
 	public boolean isDone() {
 		return scoreSheet.isComplete();
+	}
+	public void putScore(Category category, ArrayList<Dice> diceSet) {
+		// TODO Auto-generated method stub
+		if(getIndexOf(category)!=-1) { // checks to see if the category is yet to be completed.
+			// sets the score for the category if it has not been completed
+scoreSheet.setScoreCategory(category, diceSet);
+
+if(categoriesLeft().contains(Category.YAHTZEE) && category == Category.YAHTZEE) {
+removeCategory(category);
+}
+else {
+removeCategory(category);}
+}
+		
 	}
 	
 }
