@@ -1,5 +1,6 @@
 package model;
 import java.util.ArrayList;
+
 import model.ScoreSheet.Category;
 
 public class Player {
@@ -14,19 +15,11 @@ public class Player {
 			categories.add(i);
 		}
 	}
-	
 	public int getID() {
 		return id;
 	}
-	
-	public void putScore(Category category, ArrayList<Dice> score) {
-		if(getIndexOf(category)!=-1) { // checks to see if the category is yet to be completed.
-										// sets the score for the category if it has not been completed
-			scoreSheet.setScoreCategory(category, score);
-			removeCategory(category);
-		}
-		// does not do anything if the category has already been completed. Manage this in the view or game manager.
-		// the player must choose another category
+	public int getScoreCategory(Category category) {
+		return scoreSheet.getScoreCategory(category);
 	}
 	public ArrayList<Category> categoriesLeft() {
 		ArrayList<Category> categories = new ArrayList<>();
@@ -38,7 +31,7 @@ public class Player {
 	/*
 	 * @pre categories.getIndexOf(remove) != -1
 	 */
-	private boolean removeCategory(Category remove) {
+	public boolean removeCategory(Category remove) {
 		int index = getIndexOf(remove);
 		if(index != -1) {
 			categories.remove(index);
@@ -57,6 +50,20 @@ public class Player {
 	
 	public boolean isDone() {
 		return scoreSheet.isComplete();
+	}
+	public void putScore(Category category, ArrayList<Dice> diceSet) {
+		// TODO Auto-generated method stub
+		if(getIndexOf(category)!=-1) { // checks to see if the category is yet to be completed.
+			// sets the score for the category if it has not been completed
+scoreSheet.setScoreCategory(category, diceSet);
+
+if(categoriesLeft().contains(Category.YAHTZEE) && category == Category.YAHTZEE) {
+removeCategory(category);
+}
+else {
+removeCategory(category);}
+}
+		
 	}
 	
 }
