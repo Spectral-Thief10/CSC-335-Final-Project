@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 
 import model.ScoreSheet.Category;
 
@@ -10,17 +9,9 @@ public class CPU extends Player{
 		if(this.mode.ordinal() == Mode.EASY.ordinal()) {
 			strategy = new EasyMode(this);
 		}
-		else {
+		if(this.mode.ordinal()==Mode.HARD.ordinal()){
 			strategy = new HardMode(this);
 		}
-	}
-	public boolean perfectRoll(boolean[] roll) {
-		for(int i = 0; i < roll.length;i++) {
-			if(roll[i]==true) {
-				return false;
-			}
-		}
-		return true;
 	}
 	public boolean[] chooseUpperScoreRerolls(DiceSet dice) {
 		boolean[] rerolls = {false,false,false,false,false};
