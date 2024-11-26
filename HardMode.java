@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 
+import model.Dice;
 import model.ScoreSheet.Category;
 
 public class HardMode implements Strategy{

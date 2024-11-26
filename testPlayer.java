@@ -1,5 +1,8 @@
 import static org.junit.Assert.*;
 import org.junit.jupiter.api.Test;
+
+import model.Category;
+import model.Player;
 public class testPlayer {
 	@Test
 	public void testRemoveEmptyCategory() {

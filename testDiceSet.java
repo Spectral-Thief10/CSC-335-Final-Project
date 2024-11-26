@@ -1,6 +1,8 @@
 import static org.junit.Assert.*;
 import org.junit.jupiter.api.Test;
 
+import model.Dice;
+
 import java.util.ArrayList;
 
 public class testDiceSet {

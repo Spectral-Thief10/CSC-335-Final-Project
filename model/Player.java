@@ -1,19 +1,25 @@
 package model;
 import java.util.ArrayList;
-
 import model.ScoreSheet.Category;
 
 public class Player {
 	private ArrayList<Category> categories;
 	private ScoreSheet scoreSheet;
-	public Player() {
+	private int id;
+	public Player(int idVal) {
+		id = idVal;
 		scoreSheet = new ScoreSheet();
 		categories = new ArrayList<>();
 		for(Category i : Category.values()) {
 			categories.add(i);
 		}
 	}
-	public void putScore(Category category, int score) {
+	
+	public int getID() {
+		return id;
+	}
+	
+	public void putScore(Category category, ArrayList<Dice> score) {
 		if(getIndexOf(category)!=-1) { // checks to see if the category is yet to be completed.
 										// sets the score for the category if it has not been completed
 			scoreSheet.setScoreCategory(category, score);
