@@ -3,6 +3,7 @@
  */
 package model;
 
+import java.util.Collections;
 import java.util.ArrayList;
 
 public class Calculator {
@@ -37,14 +38,16 @@ public class Calculator {
 	 **/
 	public static int threeOfAKindCalculator(ArrayList<Dice> dice) {
 
-		for (int i = 0; i < dice.size(); i++) {
-
+		for (int i = 0; i <= 6; i++) {
+			// find the three of a kind
 			int count = 0;
 			for (int j = 0; j < dice.size(); j++) {
-				if (dice.get(i) == dice.get(j)) {
+				if (i == dice.get(j).VALUE) {
 					count++;
 				}
 			}
+
+			// count the score
 			if (count >= 3) {
 				int total = 0;
 				for (int j = 0; j < dice.size(); j++) {
@@ -53,6 +56,7 @@ public class Calculator {
 				return total;
 			}
 		}
+
 		return 0;
 	}
 
@@ -65,11 +69,11 @@ public class Calculator {
 	 **/
 	public static int fourOfAKindCalculator(ArrayList<Dice> dice) {
 
-		for (int i = 0; i < dice.size(); i++) {
+		for (int i = 0; i <= 6; i++) {
 
 			int count = 0;
 			for (int j = 0; j < dice.size(); j++) {
-				if (dice.get(i) == dice.get(j)) {
+				if (i == dice.get(j).VALUE) {
 					count++;
 				}
 			}
@@ -95,11 +99,11 @@ public class Calculator {
 		boolean threeOfAKind = false;
 		boolean pair = false;
 
-		for (int i = 0; i < dice.size(); i++) {
+		for (int i = 0; i <= 6; i++) {
 			int count = 0;
 
 			for (int j = 0; j < dice.size(); j++) {
-				if (dice.get(i) == dice.get(j)) {
+				if (i == dice.get(j).VALUE) {
 					count++;
 				}
 			}
@@ -125,15 +129,31 @@ public class Calculator {
 	 * @return its return the total
 	 **/
 	public static int smallStraightCalculator(ArrayList<Dice> dice) {
-		boolean[] number = new boolean[5];
+		Collections.sort(dice);
 
-		for (int i = 0; i < dice.size(); i++) {
-			number[dice.get(i).VALUE - 1] = true;
-		}
+		// algo: assuming the array is sorted, we have 2 start points to check at index 0 and 1
+		// only one duplicate pair is acceptable for there to still be a straight possibility
+		// but if the last item in the straight is a duplicate of the next to last item, there
+		// can't possibly be a straight there.
+		for (int j = 1; j <= 2; j++){
+			boolean foundStraight = true;
+			boolean hasDuplicate = false;
 
-		if ((number[0] && number[1] && number[2] && number[3]) || (number[1] && number[2] && number[3] && number[4])
-				|| (number[2] && number[3] && number[4] && number[5])) {
-			return 30;
+			for (int i = j; i < dice.size()-2+j && foundStraight; i++){
+				if (dice.get(i-1).VALUE == dice.get(i).VALUE && i != dice.size()-3+j) {
+					if (hasDuplicate) {
+						foundStraight = false;
+					} else {
+						hasDuplicate = true;
+					}
+				}
+				else if (!(dice.get(i-1).VALUE == dice.get(i).VALUE - 1)) {
+					foundStraight = false;
+				}
+			}
+			if (foundStraight) {
+				return 30;
+			}
 		}
 
 		return 0;
@@ -147,18 +167,14 @@ public class Calculator {
 	 * @return its return the total
 	 **/
 	public static int largeStraightCalculator(ArrayList<Dice> dice) {
-		boolean[] number = new boolean[5];
-
-		for (int i = 0; i < dice.size(); i++) {
-			number[dice.get(i).VALUE - 1] = true;
+		Collections.sort(dice);
+		for (int i = 1; i < dice.size(); i ++){
+			if (!(dice.get(i-1).VALUE == dice.get(i).VALUE - 1)) {
+				return 0;
+			}
 		}
 
-		if ((number[0] && number[1] && number[2] && number[3]) && number[4]
-				|| (number[1] && number[2] && number[3] && number[4] && number[5])) {
-			return 40;
-		}
-
-		return 0;
+		return 40;
 	}
 
 	/*
@@ -170,11 +186,10 @@ public class Calculator {
 	 **/
 	public static int yahtzeeCalculator(ArrayList<Dice> dice) {
 
-		for (int i = 0; i < dice.size(); i++) {
-
+		for (int i = 0; i <= 6; i++) {
 			int count = 0;
 			for (int j = 0; j < dice.size(); j++) {
-				if (dice.get(i) == dice.get(j)) {
+				if (i == dice.get(j).VALUE) {
 					count++;
 				}
 			}

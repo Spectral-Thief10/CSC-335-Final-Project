@@ -2,7 +2,7 @@
  * Representation of a d6 dice.
  * 
  */
-
+package model;
 import java.util.Random;
 
 public final class Dice implements Comparable<Dice> {

@@ -1,8 +1,9 @@
-
 /**
 *The ScoreSheet class is going to represent the score for the game. It calculates the total score for the game 
 *after all the categories has been scored as well as add the upper bonus if the score of the upper section exceeds 63 
 */
+package model;
+
 import java.util.HashMap;
 import java.util.ArrayList;
 
