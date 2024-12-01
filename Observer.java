@@ -1,6 +1,7 @@
+import model.ScoreSheet.Category;
 
 public interface Observer {
-	void update();
 	int getId();
+	void update(Category category, String val);
 
 }
