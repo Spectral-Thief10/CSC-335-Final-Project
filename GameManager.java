@@ -88,14 +88,49 @@ public class GameManager {
 		}
 		
 		//if the next player is the CPU, decide the next set of moves for it
-		if(currentPlayer instanceof CPU) {
-			
-			//add CPU functionality			
-			
+		if (currentPlayer instanceof CPU) {
+
+			CPU cpuPlayer = (CPU) currentPlayer;
+
+			while (diceSet.canRoll()) {
+				boolean[] rerolls = cpuPlayer.chooseScoreRerolls(diceSet);
+				diceSet.rollDiceAt(rerolls);
+				notifyAllObservers();
+
+			}
+
+			ScoreSheet.Category category = cpuPlayer.getCategory();
+			if (category != null) {
+				cpuPlayer.putScore(category, diceSet.getResult());
+				notifyAllObservers();
+			}
+
+			diceSet.reset();
+			notifyAllObservers();
+
+			boolean[] rerollAll = { true, true, true, true, true };
+			diceSet.rollDiceAt(rerollAll);
+			notifyAllObservers();
+
+			if (cpuPlayer.isDone()) {
+				activePlayers.remove(cpuPlayer);
+				wonPlayers.add(cpuPlayer);
+				notifyAllObservers();
+			}
+
 		}
 		
 		return true;
 	}
+
+	public void notifyAllObservers() {
+		for (Observer observer : observers.values()) {
+			if (observer != null) {
+				observer.update();
+			}
+		}
+	}
+
 	
 	public void registerObserver(int id, Observer observer) {
 		observers.put(id, observer);
