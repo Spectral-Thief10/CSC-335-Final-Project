@@ -113,4 +113,77 @@ public class testHardMode {
 		rerolls = hard.chanceRerolls(diceSet, new boolean[] {false,false,false,false,false});
 		assertArrayEquals(new boolean[] {false,false,false,true,false},rerolls);
 	}
+
+	@Test
+	public void testChooseCategory() {
+		ArrayList<Dice> diceSet = TestHelper.createResult(new int[] {6,6,6,6,6});
+		CPU cpu = new CPU(Mode.HARD,0,diceSet);
+		HardMode hard = new HardMode(cpu,diceSet);
+		assertTrue(hard.chooseCategory(diceSet)==Category.YAHTZEE);
+		cpu.removeCategory(Category.ONE);
+		cpu.removeCategory(Category.TWO);
+		cpu.removeCategory(Category.THREE);
+		cpu.removeCategory(Category.FOUR);
+		cpu.removeCategory(Category.FIVE);
+		cpu.removeCategory(Category.SIX);
+		cpu.removeCategory(Category.FOUR_OF_A_KIND);
+		cpu.removeCategory(Category.THREE_OF_A_KIND);
+		cpu.removeCategory(Category.LARGE_STRAIGHT);
+		cpu.removeCategory(Category.SMALL_STRAIGHT);
+		cpu.removeCategory(Category.FULL_HOUSE);
+		diceSet = TestHelper.createResult(new int[] {1,4,5,2,1});
+		assertTrue(hard.chooseCategory(diceSet)==Category.CHANCE);
+		
+		cpu.removeCategory(Category.YAHTZEE);
+		assertTrue(hard.chooseCategory(diceSet)==Category.CHANCE);
+		
+		cpu = new CPU(Mode.HARD,0,diceSet);
+		hard = new HardMode(cpu,diceSet);
+		cpu.removeCategory(Category.ONE);
+		cpu.removeCategory(Category.TWO);
+		cpu.removeCategory(Category.THREE);
+		cpu.removeCategory(Category.FOUR);
+		cpu.removeCategory(Category.FIVE);
+		cpu.removeCategory(Category.SIX);
+		cpu.removeCategory(Category.FOUR_OF_A_KIND);
+		cpu.removeCategory(Category.THREE_OF_A_KIND);
+		cpu.removeCategory(Category.LARGE_STRAIGHT);
+		cpu.removeCategory(Category.SMALL_STRAIGHT);
+		cpu.removeCategory(Category.FULL_HOUSE);
+		cpu.removeCategory(Category.CHANCE);
+		assertTrue(hard.chooseCategory(diceSet)==Category.YAHTZEE);
+		
+		diceSet = TestHelper.createResult(new int[] {1,4,5,3,2});
+		cpu = new CPU(Mode.HARD,0,diceSet);
+		hard = new HardMode(cpu,diceSet);
+		assertTrue(hard.chooseCategory(diceSet)==Category.LARGE_STRAIGHT);
+		cpu.removeCategory(Category.LARGE_STRAIGHT);
+		assertTrue(hard.chooseCategory(diceSet)==Category.SMALL_STRAIGHT);
+		
+		diceSet = TestHelper.createResult(new int[] {4,4,5,4,4});
+		assertTrue(hard.chooseCategory(diceSet)==Category.FOUR_OF_A_KIND);
+		
+		diceSet = TestHelper.createResult(new int[] {5,4,5,4,4});
+		assertTrue(hard.chooseCategory(diceSet)==Category.FULL_HOUSE);
+		
+		diceSet = TestHelper.createResult(new int[] {4,1,5,4,4});
+		assertTrue(hard.chooseCategory(diceSet)==Category.THREE_OF_A_KIND);
+		
+		diceSet = TestHelper.createResult(new int[] {1,2,5,6,5});
+		assertTrue(hard.chooseCategory(diceSet)==Category.FIVE);
+		
+		cpu.removeCategory(Category.ONE);
+		diceSet = TestHelper.createResult(new int[] {1,2,1,6,5});
+		assertTrue(hard.chooseCategory(diceSet)==Category.CHANCE);
+		
+		cpu.removeCategory(Category.CHANCE);
+		diceSet = TestHelper.createResult(new int[] {1,2,1,6,5});
+		assertTrue(hard.chooseCategory(diceSet)==Category.TWO);
+		
+		for(Category category : cpu.categoriesLeft()) {
+			cpu.removeCategory(category);
+		}
+		assertTrue(hard.chooseCategory(diceSet)==Category.YAHTZEE);
+	}
+
 }

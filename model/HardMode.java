@@ -70,9 +70,6 @@ public class HardMode implements Strategy{
 		}
 	}
 	private Category upperSectionChoice() {
-		if(yahtzeeRoll()==true) {
-			return Category.YAHTZEE;
-		}
 	int[]numberCounts = this.countsOfNums(diceSet);
 	ArrayList<Category> left = cpu.categoriesLeft();
 	int highestCount = numberCounts[5];
@@ -158,7 +155,7 @@ public class HardMode implements Strategy{
 				differences++;
 			}
 		}
-		return differences==1;
+		return differences==1 || differences == 0;
 	}
 	/*
 	 * @pre rerolls.length == 5
