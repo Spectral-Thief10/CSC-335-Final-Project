@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import model.ScoreSheet.Category;
 import model.Dice;
+import model.DiceSet;
 import model.Player;
 public class testPlayer {
 	Player p1 = new Player(1);

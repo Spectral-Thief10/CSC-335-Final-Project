@@ -2,6 +2,7 @@ import static org.junit.Assert.*;
 import org.junit.jupiter.api.Test;
 
 import model.Dice;
+import model.DiceSet;
 
 import java.util.ArrayList;
 

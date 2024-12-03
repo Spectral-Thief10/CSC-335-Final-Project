@@ -1,5 +1,4 @@
 package model;
-import DiceSet;
 
 public interface Strategy {
 	public ScoreSheet.Category chooseCategory();

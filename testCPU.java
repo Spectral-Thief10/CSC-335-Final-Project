@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import model.CPU;
 import model.Dice;
+import model.DiceSet;
 import model.Mode;
 import model.ScoreSheet;
 import model.ScoreSheet.Category;
