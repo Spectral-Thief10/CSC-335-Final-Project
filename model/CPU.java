@@ -1,57 +1,73 @@
 package model;
 
 
-import DiceSet;
+import java.util.ArrayList;
+
 import model.ScoreSheet.Category;
 
 public class CPU extends Player{
 	private Mode mode;
-	private DiceSet dice;
+	private ArrayList<Dice> diceSet = new ArrayList<>();
 	private Strategy strategy;
-	public CPU(Mode mode,int id ,DiceSet dice) {
+	/*
+	 * @pre dice.size() == 5
+	 */
+	public CPU(Mode mode,int id,ArrayList<Dice> dice) {
 		super(id);
-		this.dice = dice;
+		setDice(dice);
 		this.mode = mode;
 		if(this.mode == Mode.EASY) {
-			strategy = new EasyMode(this,dice);
+			strategy = new EasyMode(this,diceSet);
 		}
 		if(this.mode==Mode.HARD){
-			strategy = new HardMode(this,dice);
+			strategy = new HardMode(this,diceSet);
 		}
 	}
-	public boolean[] chooseScoreRerolls(DiceSet dice) {
+	/*
+	 * @pre diceSet.size() == 5
+	 */
+	public void setDice(ArrayList<Dice> diceSet) {
+		this.diceSet = new ArrayList<>();
+		for(int i = 0; i < diceSet.size();i++) {
+			Dice dice = new Dice(diceSet.get(i).VALUE);
+			this.diceSet.add(dice);
+		}
+	}
+	/*
+	 * @pre dice.size() == 5
+	 */
+	public boolean[] chooseScoreRerolls(ArrayList<Dice> dice) {
 		boolean[] rerolls = {false, false, false,false,false};
-		this.dice = dice;
-		if(getCategory()==Category.ONE || getCategory()==Category.TWO || getCategory()==Category.THREE
-				||getCategory()==Category.FOUR || getCategory()==Category.FIVE || getCategory()==Category.SIX) {
-			rerolls = strategy.upperKindRerolls(this.dice,rerolls);
+		setDice(dice);
+		if(getCategory()==Category.ONE || getCategory()==Category.TWO || getCategory()==Category.THREE ||getCategory()==Category.FOUR || getCategory()==Category.FIVE || getCategory()==Category.SIX) {
+			rerolls = strategy.upperKindRerolls(diceSet,rerolls);
 		}
 		else if(getCategory()==Category.THREE_OF_A_KIND) {
-			rerolls = strategy.kindRerolls(this.dice, rerolls);
+			rerolls = strategy.kindRerolls(diceSet, rerolls);
 		}
 		else if(getCategory()==Category.FOUR_OF_A_KIND) {
-			rerolls = strategy.kindRerolls(this.dice,rerolls);
+			rerolls = strategy.kindRerolls(diceSet,rerolls);
 			
 		}else if(getCategory()==Category.FULL_HOUSE) {
-			rerolls = strategy.fullHouseRerolls(this.dice,rerolls);
+			rerolls = strategy.fullHouseRerolls(diceSet,rerolls);
 			
 		}
 		else if(getCategory()==Category.SMALL_STRAIGHT){
-			rerolls = strategy.straightRerolls(this.dice,rerolls);
+			rerolls = strategy.straightRerolls(diceSet,rerolls);
 		}
 		else if(getCategory()==Category.LARGE_STRAIGHT) {
-			rerolls = strategy.straightRerolls(this.dice, rerolls);
+			rerolls = strategy.straightRerolls(diceSet, rerolls);
 		}
 		else if(getCategory()==Category.YAHTZEE) {
-			rerolls = strategy.yahtzeeRerolls(this.dice,rerolls);
+			rerolls = strategy.yahtzeeRerolls(diceSet,rerolls);
 		}
 		else {
-			rerolls = strategy.chanceRerolls(this.dice,rerolls);
+			rerolls = strategy.chanceRerolls(diceSet,rerolls);
 		}
 		return rerolls;
 		
 	}
 	public Category getCategory() {
-		return strategy.chooseCategory();
+		return strategy.chooseCategory(diceSet);
 	}
 }

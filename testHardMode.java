@@ -113,7 +113,7 @@ public class testHardMode {
 		rerolls = hard.chanceRerolls(diceSet, new boolean[] {false,false,false,false,false});
 		assertArrayEquals(new boolean[] {false,false,false,true,false},rerolls);
 	}
-	
+
 	@Test
 	public void testChooseCategory() {
 		ArrayList<Dice> diceSet = TestHelper.createResult(new int[] {6,6,6,6,6});
@@ -185,4 +185,5 @@ public class testHardMode {
 		}
 		assertTrue(hard.chooseCategory(diceSet)==Category.YAHTZEE);
 	}
+
 }

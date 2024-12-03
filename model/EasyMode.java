@@ -1,43 +1,86 @@
-<<<<<<< HEAD:model/EasyMode.java
+
 package model;
-=======
->>>>>>> 168e1cc77f72f383b588ac0374d1efd25786da68:EasyMode.java
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-<<<<<<< HEAD:model/EasyMode.java
-import DiceSet;
-=======
->>>>>>> 168e1cc77f72f383b588ac0374d1efd25786da68:EasyMode.java
 import model.ScoreSheet.Category;
 
 public class EasyMode implements Strategy{
 	private CPU cpu;
-	private DiceSet dice;
-	public EasyMode(CPU cpu,DiceSet dice) {
+	private ArrayList<Dice> diceSet;
+	/*
+	 * @pre dice.size() == 5
+	 */
+	public EasyMode(CPU cpu,ArrayList<Dice> dice) {
 		this.cpu = cpu;
-		this.dice = dice;
+		setDice(dice);
 	}
-	public Category chooseCategory() {
+	/*
+	 * @pre dice.size() == 5
+	 */
+	public Category chooseCategory(ArrayList<Dice> dice) {
+		setDice(dice);
 		return cpu.categoriesLeft().get(0);
 	}
+	/*
+	 * @pre diceSet.size() == 5
+	 */
+	public void setDice(ArrayList<Dice> diceSet) {
+		this.diceSet = new ArrayList<>();
+		for(int i = 0; i < diceSet.size();i++) {
+			Dice dice = new Dice(diceSet.get(i).VALUE);
+			this.diceSet.add(dice);
+		}
+	}
+	/*
+	 * @pre rerolls.length == 5 && diceSet1.size() == 5
+	 */
 	@Override
-	public boolean[] upperKindRerolls(DiceSet dice,boolean[]rerolls) {
-		this.dice = dice;
-		for(int i = 0; i < this.dice.getResult().size();i++) {
-			if(this.dice.getResult().get(i).VALUE != cpu.getCategory().ordinal()+1) {
-				rerolls[i]=true;
+	public boolean[] upperKindRerolls(ArrayList<Dice> diceSet1,boolean[]rerolls) {
+		setDice(diceSet1);
+		for(int i = 0; i < 5; i++) {
+			if(cpu.getCategory()==Category.ONE) {
+				if(diceSet.get(i).VALUE!=1) {
+					rerolls[i]=true;
+				}
+			}
+			if(cpu.getCategory()==Category.TWO) {
+				if(diceSet.get(i).VALUE!=2) {
+					rerolls[i]=true;
+				}
+			}
+			if(cpu.getCategory()==Category.THREE) {
+				if(diceSet.get(i).VALUE!=3) {
+					rerolls[i]=true;
+				}
+			}
+			if(cpu.getCategory()==Category.FOUR) {
+				if(diceSet.get(i).VALUE!=4) {
+					rerolls[i]=true;
+				}
+			}
+			if(cpu.getCategory()==Category.FIVE) {
+				if(diceSet.get(i).VALUE!=5) {
+					rerolls[i]=true;
+				}
+			}
+			if(cpu.getCategory()==Category.SIX) {
+				if(diceSet.get(i).VALUE!=6) {
+					rerolls[i]=true;
+				}
 			}
 		}
-		return rerolls;
+		return rerollsCopy(rerolls);
 	}
+	/*
+	 * @pre rerolls.length == 5 && diceSet1.size() == 5
+	 */
 	@Override
-	public boolean[] kindRerolls(DiceSet dice,boolean []rerolls) {
+	public boolean[] kindRerolls(ArrayList<Dice> diceSet1,boolean []rerolls) {
 		int[] numbers = {0,0,0,0,0,0};
-		this.dice = dice;
-		ArrayList<Dice> diceSet = this.dice.getResult();
+		setDice(diceSet1);
 		for(int i = 0; i < rerolls.length;i++) {
 			numbers[diceSet.get(i).VALUE-1] = numbers[diceSet.get(i).VALUE-1]+1;
 		}
@@ -54,13 +97,15 @@ public class EasyMode implements Strategy{
 				rerolls[i]=true;
 			}
 		}
-		return rerolls;
+		return rerollsCopy(rerolls);
 	}
+	/*
+	 * @pre rerolls.length == 5 && diceSet1.size() == 5
+	 */
 	@Override
-	public boolean[] fullHouseRerolls(DiceSet dice, boolean[] rerolls) {
+	public boolean[] fullHouseRerolls(ArrayList<Dice> diceSet1, boolean[] rerolls) {
 		// TODO Auto-generated method stub
-		this.dice = dice;
-		ArrayList<Dice> diceSet = this.dice.getResult();
+		setDice(diceSet1);
 		HashMap<Integer,Integer> map = new HashMap<>();
 		HashMap<Integer,ArrayList<Integer>> indexMap = new HashMap<>();
 		for(int i = 0; i < diceSet.size();i++) {
@@ -120,16 +165,31 @@ public class EasyMode implements Strategy{
 			}
 			
 		}
-		return rerolls;
+		return rerollsCopy(rerolls);
 	}
+	/*
+	 * @pre rerolls.length == 5
+	 */
+	private boolean[] rerollsCopy(boolean[]rerolls) {
+		boolean[] copy = {false,false,false,false,false};
+		for(int i = 0; i < copy.length;i++) {
+			copy[i]=rerolls[i];
+		}
+		return copy;
+	}
+	/*
+	 * @pre rerolls.length == 5 && diceSet1.size() == 5
+	 */
 	@Override
-	public boolean[] straightRerolls(DiceSet dice, boolean[] rerolls) {
+	public boolean[] straightRerolls(ArrayList<Dice> diceSet1, boolean[] rerolls) {
 		// TODO Auto-generated method stub
 		int highestStraight = 1;
 		int currentStraight = 1;
-		this.dice = dice;
-		ArrayList<Dice> diceSet = this.dice.getResult();
-		
+		setDice(diceSet1);
+		ArrayList<Dice> diceSet = new ArrayList<>();
+		for(int i = 0; i < this.diceSet.size();i++) {
+			diceSet.add(new Dice(this.diceSet.get(i).VALUE));
+		}
 		HashMap<Integer,ArrayList<Integer>> indexMap = new HashMap<>();
 		for(int i = 0; i < diceSet.size();i++) {
 			if(indexMap.containsKey(diceSet.get(i).VALUE)) {
@@ -188,15 +248,18 @@ public class EasyMode implements Strategy{
 		for(int i : rerollAt) {
 			rerolls[i]=true;
 		}
-		return rerolls;
+		return rerollsCopy(rerolls);
 	}
+	/*
+	 * @pre rerolls.length == 5 && diceSet1.size() == 5
+	 */
 	@Override
-	public boolean[] yahtzeeRerolls(DiceSet dice, boolean[] rerolls) {
+	public boolean[] yahtzeeRerolls(ArrayList<Dice> diceSet1, boolean[] rerolls) {
 		// TODO Auto-generated method stub
-		this.dice = dice;
+		
 		HashMap<Integer,Integer> map = new HashMap<>();
 		HashMap<Integer,ArrayList<Integer>> indexMap = new HashMap<>();
-		ArrayList<Dice> diceSet = this.dice.getResult();
+		setDice(diceSet1);
 		
 		for(int i = 0; i < diceSet.size();i++) {
 			if(map.containsKey(diceSet.get(i).VALUE)) {
@@ -221,6 +284,22 @@ public class EasyMode implements Strategy{
 				numWithHighCount = i;
 			}
 		}
+		if(highestCount == 1) {
+			int max = 0;
+			int index = 0;
+			for(int i = 0; i <diceSet.size();i++) {
+				if(max < diceSet.get(i).VALUE) {
+					max = diceSet.get(i).VALUE;
+					index = i;
+				}
+			}
+			for(int i = 0; i < diceSet.size();i++) {
+				if(index != i) {
+					rerolls[i]=true;
+				}
+			}
+			return rerollsCopy(rerolls);
+		}
 		for(int i : indexMap.keySet()) {
 			for(int e : indexMap.get(i)) {
 				if(i != numWithHighCount) {
@@ -228,19 +307,21 @@ public class EasyMode implements Strategy{
 				}
 			}
 		}
-		return rerolls;
+		return rerollsCopy(rerolls);
 	}
+	/*
+	 * @pre rerolls.length == 5 && diceSet1.size() == 5
+	 */
 	@Override
-	public boolean[] chanceRerolls(DiceSet dice, boolean[] rerolls) {
+	public boolean[] chanceRerolls(ArrayList<Dice> diceSet1, boolean[] rerolls) {
 		// TODO Auto-generated method stub
-		this.dice = dice;
-		ArrayList<Dice> diceSet = this.dice.getResult();
+		setDice(diceSet1);
 		for(int i = 0; i < diceSet.size();i++) {
 			if(diceSet.get(i).VALUE!=6) {
 				rerolls[i]=true;
 			}
 		}
-		return rerolls;
+		return rerollsCopy(rerolls);
 	}
 	
 

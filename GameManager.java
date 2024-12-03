@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import model.Dice;
+import model.DiceSet;
 import model.Player;
 import model.ScoreSheet.Category;
 

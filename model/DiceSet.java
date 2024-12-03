@@ -3,8 +3,8 @@
  * 
  * 
  */
+package model;
 
-import model.Dice;
 import java.util.ArrayList;
 
 public class DiceSet {
