@@ -4,7 +4,10 @@ import java.util.HashMap;
 import model.Dice;
 import model.DiceSet;
 import model.Player;
+import model.ScoreSheet; 
 import model.ScoreSheet.Category;
+import model.Mode;
+import model.CPU;
 
 public class GameManager {
 
@@ -51,7 +54,7 @@ public class GameManager {
 			activePlayers.add(new Player(i));
 		}
 		
-		activePlayers.add(new CPU(gameMode,num+1,diceSet));
+		activePlayers.add(new CPU(gameMode,num+1,diceSet.getResult()));
 		currentPlayer = activePlayers.get(0);
 	}
 
