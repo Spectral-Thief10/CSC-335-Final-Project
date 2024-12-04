@@ -190,7 +190,7 @@ public class GameView extends Application {
 		
 		root.getChildren().addAll(playerLabel, buttons);
 		
-		for (int i = 1; i <= 4; i++) {
+		for (int i = 2; i <= 4; i++) {
 			Button b = new Button(i + " Player");
 			b.setFont(Font.font("Times New Roman", 20));
 			b.setStyle("-fx-background-color: #FCD060;");
@@ -217,84 +217,6 @@ public class GameView extends Application {
 	private static void gameScreen(Stage primaryStage) {
 		BorderPane BPane = new BorderPane();
 
-		GridPane Sheet = new GridPane();
-		Sheet.setHgap(30);
-		Sheet.setVgap(0);
-		Sheet.setStyle(
-				"-fx-border-color: black; -fx-border-width: 2px; -fx-padding: 10;-fx-background-color: #9c9c9c;");
-
-		Label category = new Label("Category");
-		category.setStyle("-fx-font-weight: bold;");
-
-		Label you = new Label("You");
-		you.setStyle("-fx-font-weight: bold;");
-
-		Label player1 = new Label("Player 1");
-		player1.setStyle("-fx-font-weight: bold;");
-
-		Sheet.add(category, 0, 0);
-		Sheet.add(you, 1, 0);
-		Sheet.add(player1, 2, 0);
-
-		String[] categories = { "Ones", "Twos", "Threes", "Fours", "Fives", "Sixes", "Sum", "Bonus", "Three of a kind",
-				"Four of a kind", "Full House", "Small straight", "Large straight", "Chance", "YAHTZEE",
-				"TOTAL SCORE" };
-
-		Label sum = new Label("0");
-		sum.setStyle("-fx-border-color: black; -fx-padding: 5; -fx-min-width: 50px; -fx-text-alignment: center;");
-
-		Label bonus = new Label();
-		bonus.setStyle("-fx-border-color: black; -fx-padding: 5; -fx-min-width: 50px; -fx-text-alignment: center;");
-
-		ScoreSheet scoreSheet = new ScoreSheet();
-		DiceSet diceSet = new DiceSet();
-		boolean[] hold = new boolean[5];
-
-		for (int i = 0; i < categories.length; i++) {
-			Label categoryType = new Label(categories[i]);
-			categoryType.setStyle("-fx-padding: 5; -fx-font-size: 14px;");
-
-			Label yourScore = new Label();
-			yourScore.setStyle(
-					"-fx-border-color: black; -fx-padding: 5; -fx-min-width: 50px; -fx-text-alignment: center;");
-
-			final int index = i;
-
-			yourScore.setOnMouseClicked(e -> {
-				if (yourScore.getText().isEmpty() && diceSet.hasResult()) {
-					int[] diceResults = new int[diceSet.getResult().size()];
-					for (int z = 0; z < diceSet.getResult().size(); ++z) {
-						diceResults[z] = diceSet.getResult().get(z).VALUE;
-					}
-
-					boolean updated = false;
-
-					if (updated) {
-						yourScore.setText(
-								String.valueOf(scoreSheet.getScoreCategory(ScoreSheet.Category.values()[index])));
-						diceSet.reset();
-					}
-				}
-			});
-
-			Label playerScore = new Label();
-			playerScore.setStyle(
-					"-fx-border-color: black; -fx-padding: 5; -fx-min-width: 50px; -fx-text-alignment: center;");
-
-			Sheet.add(categoryType, 0, i + 1);
-			Sheet.add(yourScore, 1, i + 1);
-			Sheet.add(playerScore, 2, i + 1);
-
-			if (categories[i].equals("Sum")) {
-				Sheet.add(sum, 1, i + 1);
-			} else if (categories[i].equals("Bonus")) {
-				Sheet.add(bonus, 1, i + 1);
-			}
-		}
-
-		BorderPane.setMargin(Sheet, new Insets(0, 0, 100, 50));
-		BPane.setLeft(Sheet);
-
 		VBox diceRoot = new VBox();
 		diceRoot.setPadding(new Insets(10));
 		diceRoot.setSpacing(10);
@@ -309,42 +231,14 @@ public class GameView extends Application {
 				"-fx-border-color: black; -fx-border-radius: 3px; -fx-font-size: 20px; -fx-background-color: #9c9c9c;");
 
 		buttonRoll.setOnAction(e -> {
-			if (diceSet.canRoll()) {
-				diceRoll.play();
-				boolean[] roll = new boolean[5];
-				for (int i = 0; i < hold.length; i++) {
-					roll[i] = !hold[i];
-				}
-				diceSet.rollDiceAt(roll);
-
-				diceRow.getChildren().clear();
-				for (int i = 0; i < diceSet.getResult().size(); i++) {
-					Label dLabel = new Label(String.valueOf(diceSet.getResult().get(i).VALUE));
-					if (hold[i]) {
-						dLabel.setStyle("-fx-font-size: 20px; -fx-background-color: #9c9c9c;; -fx-padding: 5px;");
-					} else {
-						dLabel.setStyle("-fx-font-size: 30px; -fx-border-color: black; -fx-padding: 10px;");
-					}
-
-					final int dIndex = i;
-					dLabel.setOnMouseClicked(event -> {
-						hold[dIndex] = !hold[dIndex];
-						if (hold[dIndex]) {
-							dLabel.setStyle("-fx-font-size: 20px; -fx-background-color: #9c9c9c;; -fx-padding: 5px;");
-						} else {
-							dLabel.setStyle("-fx-font-size: 30px; -fx-border-color: black; -fx-padding: 10px;");
-						}
-					});
-					diceRow.getChildren().add(dLabel);
-				}
-
-			}
+			buttonPress.play();
 		});
 
 		diceRoot.getChildren().addAll(diceRow, buttonRoll);
 		BPane.setCenter(diceRoot);
-
-		Scene SceneGame = new Scene(BPane, 800, 550);
+		BPane.setStyle("-fx-background-image: url('UIAssets/woodGrain.jpeg'); -fx-background-size: cover; ");
+		
+		Scene SceneGame = new Scene(BPane, 1300, 700);
 		primaryStage.setScene(SceneGame);
 	}
 
