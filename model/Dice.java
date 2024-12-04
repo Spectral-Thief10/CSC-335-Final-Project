@@ -6,7 +6,7 @@ package model;
 import java.util.Random;
 
 public final class Dice implements Comparable<Dice> {
-    public static Random rnjesus = new Random(
+	private static Random rnjesus = new Random(
             System.currentTimeMillis() * System.currentTimeMillis() - (System.currentTimeMillis() % 10000));
     public final int VALUE;
 

@@ -2,6 +2,7 @@
  * GUI Viewer
  */
 
+import java.util.ArrayList;
 import java.util.Optional;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -15,6 +16,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -24,7 +28,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.media.AudioClip;
+
 import javafx.stage.Stage;
+import model.Dice;
 import model.DiceSet;
 import model.ScoreSheet;
 import model.Mode;
@@ -33,7 +39,6 @@ public class GameView extends Application {
 
 	private static Stage primaryStage;
 	private static AudioClip buttonPress = new AudioClip("file:UIAssets/buttonPress.mp3");
-	private static AudioClip scorePress = new AudioClip("file:UIAssets/scorePress.mp3");
 	private static AudioClip diceRoll = new AudioClip("file:UIAssets/diceRoll.mp3");
 
 	@Override
@@ -213,11 +218,17 @@ public class GameView extends Application {
 	private static void gameScreen(Stage primaryStage, GameManager game) {
 		BorderPane BPane = new BorderPane();
 		GridPane root = new GridPane();
+		boolean[] rerolls = {true, true, true, true, true};
+		ArrayList<Dice> result = game.getDiceSet();
 		
+		// configure score sheet
 		HBox scoreRoot = new HBox();
-		root.add(scoreRoot, 0, 0);
-		
+		root.add(scoreRoot, 0, 1);
+		for (int i = 1; i < game.getActivePlayers(); i++) {
+			game.registerObserver(i, new ScoreSheetGUI(scoreRoot, "Player " + i, i));
+		}
 
+		/* DICE DISPLAY LOGIC */
 		VBox diceRoot = new VBox();
 		diceRoot.setPadding(new Insets(10));
 		diceRoot.setSpacing(10);
@@ -225,22 +236,103 @@ public class GameView extends Application {
 
 		HBox diceRow = new HBox();
 		diceRow.setSpacing(15);
-		diceRow.setAlignment(Pos.CENTER);
+		for (int i = 0; i < 5; i++) {
+			Button diceButton = new Button(Integer.toString(i));
+			ImageView diceFace = new ImageView(new Image("UIAssets/dice"+result.get(i).VALUE+".png", 100, 100, true, false));
+			diceButton.setGraphic(diceFace);
+			diceButton.setPadding(new Insets(-1, -1, -1, -1));
+			diceButton.setStyle("-fx-border-color: transparent; -fx-background-color: transparent; -fx-text-fill: transparent");
+			diceButton.setMaxWidth(100);	
+			
+			diceButton.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent e) {
+					buttonPress.play();
+					if (!rerolls[diceButton.getText().charAt(0)-'0']) {
+						ColorAdjust undarken = new ColorAdjust();
+						undarken.setBrightness(0);
+						diceButton.setEffect(undarken);
+						rerolls[diceButton.getText().charAt(0)-'0'] = true;
+					} else {
+						ColorAdjust darken = new ColorAdjust();
+						darken.setBrightness(-0.9);
+						diceButton.setEffect(darken);
+						rerolls[diceButton.getText().charAt(0)-'0'] = false;
+					}
+				}
+			});
+			diceRow.getChildren().add(diceButton);
+		}
+
 
 		Button buttonRoll = new Button("Roll Dice");
-		buttonRoll.setStyle(
-				"-fx-border-color: black; -fx-border-radius: 3px; -fx-font-size: 20px; -fx-background-color: #9c9c9c;");
-
+		buttonRoll.setFont(Font.font("Times New Roman", 20));
+		buttonRoll.setStyle("-fx-background-color: #FCD060;");
 		buttonRoll.setOnAction(e -> {
-			buttonPress.play();
+			if (game.canRoll()) {
+				diceRoll.play();
+				
+				// rerolls, grabs new information from the game manager
+				game.reRoll(rerolls);
+				for (int i = 0; i < 5; i++) {
+					rerolls[i] = true;
+					result.set(i, game.getDiceSet().get(i));
+				}
+				diceRoot.getChildren().clear();
+				diceRow.getChildren().clear();
+				
+				// re render dice
+				for (int i = 0; i < 5; i++) {
+					Button diceButton = new Button(Integer.toString(i));
+					ImageView diceFace = new ImageView(new Image("UIAssets/dice"+result.get(i).VALUE+".png", 100, 100, true, false));
+					diceButton.setGraphic(diceFace);
+					diceButton.setPadding(new Insets(-1, -1, -1, -1));
+					diceButton.setStyle("-fx-border-color: transparent; -fx-background-color: transparent; -fx-text-fill: transparent");
+					diceButton.setMaxWidth(100);	
+					if (game.canRoll()) {
+						diceButton.setOnAction(new EventHandler<ActionEvent>() {
+							@Override
+							public void handle(ActionEvent e) {
+								buttonPress.play();
+								if (!rerolls[diceButton.getText().charAt(0)-'0']) {
+									ColorAdjust undarken = new ColorAdjust();
+									undarken.setBrightness(0);
+									diceButton.setEffect(undarken);
+									rerolls[diceButton.getText().charAt(0)-'0'] = true;
+								} else {
+									ColorAdjust darken = new ColorAdjust();
+									darken.setBrightness(-0.9);
+									diceButton.setEffect(darken);
+									rerolls[diceButton.getText().charAt(0)-'0'] = false;
+								}
+							}
+						});
+					} 
+					
+					diceRow.getChildren().add(diceButton);
+				}
+			}
+			
+			// determine if the roll button needs to be displayed
+			diceRoot.getChildren().add(diceRow);
+			if (!game.isCPUTurn() && game.canRoll()) {
+				diceRoot.getChildren().add(buttonRoll);
+			}
 		});
-
-		diceRoot.getChildren().addAll(diceRow, buttonRoll);
-		BPane.setCenter(diceRoot);
+		
+		diceRoot.getChildren().add(diceRow);
+		diceRoot.getChildren().add(buttonRoll);
+		/* DICE DISPLAY LOGIC */
+		
+		root.add(diceRoot, 2, 1);
+		
+		BPane.setPadding(new Insets(20));
+		BPane.setCenter(root);
 		BPane.setStyle("-fx-background-image: url('UIAssets/woodGrain.jpeg'); -fx-background-size: cover; ");
 		
 		Scene SceneGame = new Scene(BPane, 1300, 700);
 		primaryStage.setScene(SceneGame);
 	}
+	
 
 }

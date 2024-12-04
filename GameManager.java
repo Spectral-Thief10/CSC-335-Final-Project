@@ -28,6 +28,7 @@ public class GameManager {
 		wonPlayers = new ArrayList<Player>();
 		observers = new HashMap<>();
 		diceSet = new DiceSet();
+		resetDices();
 
 		for (int i = 1; i <= num; i++) {
 			activePlayers.add(new Player(i));
@@ -49,6 +50,7 @@ public class GameManager {
 		wonPlayers = new ArrayList<Player>();
 		diceSet = new DiceSet();
 		observers = new HashMap<>();
+		resetDices();
 
 		for (int i = 1; i <= num; i++) {
 			activePlayers.add(new Player(i));
@@ -92,12 +94,12 @@ public class GameManager {
 		}
 		
 		//if the next player is the CPU, decide the next set of moves for it
-		if (currentPlayer instanceof CPU) {
+		if (isCPUTurn()) {
 
 			CPU cpuPlayer = (CPU) currentPlayer;
 
 			while (diceSet.canRoll()) {
-				boolean[] rerolls = cpuPlayer.chooseScoreRerolls(diceSet);
+				boolean[] rerolls = cpuPlayer.chooseScoreRerolls(diceSet.getResult());
 				diceSet.rollDiceAt(rerolls);
 				notifyAllObservers();
 
@@ -109,11 +111,7 @@ public class GameManager {
 				notifyAllObservers();
 			}
 
-			diceSet.reset();
-			notifyAllObservers();
-
-			boolean[] rerollAll = { true, true, true, true, true };
-			diceSet.rollDiceAt(rerollAll);
+			resetDices();
 			notifyAllObservers();
 
 			if (cpuPlayer.isDone()) {
@@ -126,11 +124,15 @@ public class GameManager {
 		
 		return true;
 	}
+	
+	public boolean isCPUTurn() {
+		return currentPlayer instanceof CPU;
+	}
 
 	public void notifyAllObservers() {
 		for (Observer observer : observers.values()) {
 			if (observer != null) {
-				observer.update();
+				//observer.update();
 			}
 		}
 	}
@@ -147,7 +149,7 @@ public class GameManager {
 	public void notifyObserver(int id) {
         Observer observer = observers.get(id);
         if (observer != null) {
-            observer.update();
+           // observer.update();
         }
     }
 	
@@ -209,6 +211,7 @@ public class GameManager {
 		 */
 
 		diceSet.reset();
+		diceSet.rollAll();
 	}
 
 	public void reRoll(boolean[] indexes) {

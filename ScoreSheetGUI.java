@@ -4,6 +4,7 @@ import java.util.HashMap;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.media.AudioClip;
 import model.ScoreSheet;
 
 public class ScoreSheetGUI implements Observer{
@@ -11,6 +12,8 @@ public class ScoreSheetGUI implements Observer{
 	private HashMap<ScoreSheet.Category, Label> map = new HashMap<>();
 	private GridPane gridPane = new GridPane();
 	private int idVal;
+	
+	private static AudioClip scorePress = new AudioClip("file:UIAssets/scorePress.mp3");
 	
 	//Note: you can change the hbox to the most convenient layout. Thought it might give be easier to manipulate than this.add()  	
 	public ScoreSheetGUI(HBox hbox, String playerName, int id) {
