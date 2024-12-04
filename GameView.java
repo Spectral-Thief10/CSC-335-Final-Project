@@ -32,14 +32,12 @@ import model.Mode;
 public class GameView extends Application {
 
 	private static Stage primaryStage;
-	private static Optional<Mode> cpuMode;
 	private static AudioClip buttonPress = new AudioClip("file:UIAssets/buttonPress.mp3");
 	private static AudioClip scorePress = new AudioClip("file:UIAssets/scorePress.mp3");
 	private static AudioClip diceRoll = new AudioClip("file:UIAssets/diceRoll.mp3");
 
 	@Override
 	public void start(Stage arg0) throws Exception {
-		cpuMode = Optional.ofNullable(null);
 		primaryStage = arg0;
 		primaryPage(primaryStage);
 		primaryStage.show();
@@ -150,8 +148,7 @@ public class GameView extends Application {
 			@Override
 			public void handle(ActionEvent e) {
 				buttonPress.play();
-				cpuMode = Optional.of(Mode.HARD);
-				gameScreen(primaryStage);
+				gameScreen(primaryStage, new GameManager(2, Mode.HARD));
 			}
 		});
 		
@@ -162,8 +159,7 @@ public class GameView extends Application {
 			@Override
 			public void handle(ActionEvent e) {
 				buttonPress.play();
-				cpuMode = Optional.of(Mode.EASY);
-				gameScreen(primaryStage);
+				gameScreen(primaryStage, new GameManager(2, Mode.EASY));
 			}
 		});
 		
@@ -198,7 +194,7 @@ public class GameView extends Application {
 				@Override
 				public void handle(ActionEvent e) {
 					buttonPress.play();
-					gameScreen(primaryStage);
+					gameScreen(primaryStage, new GameManager(b.getText().charAt(0) - '0'));
 				}
 			});
 			buttons.getChildren().add(b);
@@ -214,8 +210,13 @@ public class GameView extends Application {
 		primaryStage.setScene(setupScene);
 	}
 
-	private static void gameScreen(Stage primaryStage) {
+	private static void gameScreen(Stage primaryStage, GameManager game) {
 		BorderPane BPane = new BorderPane();
+		GridPane root = new GridPane();
+		
+		HBox scoreRoot = new HBox();
+		root.add(scoreRoot, 0, 0);
+		
 
 		VBox diceRoot = new VBox();
 		diceRoot.setPadding(new Insets(10));
