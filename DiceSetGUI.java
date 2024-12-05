@@ -68,7 +68,8 @@ public class DiceSetGUI implements Observer {
 		buttonRoll.setOnAction(e -> {
 			if (game.canRoll()) {
 				diceRoll.play();
-				// do shit here
+				game.updateDices(rerolls);
+				
 			}
 		});
 		
@@ -83,7 +84,6 @@ public class DiceSetGUI implements Observer {
 	
 	public void update(ArrayList<Dice> result) {
 		// reset dice row
-		rerolls = new boolean[] {true, true, true, true, true};
 		for (int i = 0; i < result.size(); i++) {
 			ImageView diceFace = new ImageView(new Image("UIAssets/dice"+result.get(i).VALUE+".png", 100, 100, true, false));
 			Button diceButton = (Button) diceRow.getChildren().get(i);
@@ -99,6 +99,8 @@ public class DiceSetGUI implements Observer {
 		} else {
 			buttonRoll.setDisable(false);
 		}
+		
+		rerolls = new boolean[] {true, true, true, true, true};
 	}
 	
 	public void update(Category category, int val) {}

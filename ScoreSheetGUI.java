@@ -1,4 +1,4 @@
-//GUI for the Scoresheet
+//Adapter Class for Scoresheet GUI that implements observer
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +12,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.media.AudioClip;
 import model.Dice;
 import model.ScoreSheet;
-import model.ScoreSheet.Category;
 
 public class ScoreSheetGUI implements Observer {
 
@@ -25,9 +24,6 @@ public class ScoreSheetGUI implements Observer {
 
 	private static AudioClip scorePress = new AudioClip("file:UIAssets/scorePress.mp3");
 
-	// Note: you can change the hbox to the most convenient layout. Thought it might
-	// give be easier to manipulate than this.add()
-
 	public ScoreSheetGUI( HBox hbox, String playerName, int id, GameManager gm) {
 		 /* Constructor
 		 * 
@@ -36,22 +32,27 @@ public class ScoreSheetGUI implements Observer {
 		 * @param playerName: The playerName to display at the top of the screen
 		 * 
 		 * @param id: The id to identify the observer with
+		 * 
+		 * @param gm: The game manager object
 		 */
 
 		control = gm;
 		idVal = id;
+		
+		//heading for player name
 		heading = new Label(playerName);
 		heading.setStyle(
 				"-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white; -fx-padding: 10px; -fx-background-color: black; -fx-font-family: 'Courier New';");
 		heading.setMinWidth(200);
 		gridPane.add(heading, 0, 0);
 
+		//creating buttons for each category
 		int row = 1;
 		for (ScoreSheet.Category category : ScoreSheet.Category.values()) {
 			Button categoryButton = new Button(category.toString().replace("_", " ") + ": ");
 			categoryButton.setMinWidth(200);
 
-			// change the colours to fit the theme
+			//alternating colours for buttons
 			if (row % 2 == 0) {
 				categoryButton.setStyle(
 						"-fx-padding: 10px; -fx-font-weight: bold; -fx-font-size: 15px; -fx-background-color: white; -fx-font-family: 'Courier New';");
@@ -61,6 +62,7 @@ public class ScoreSheetGUI implements Observer {
 
 			}
 
+			//validating and updating player score when button is pressed
 			categoryButton.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
@@ -73,7 +75,8 @@ public class ScoreSheetGUI implements Observer {
 							scorePress.play();
 							boolean flag = control.nextPlayer();
 							if (!flag) {
-								// show endScreen
+								
+								//add the end screen here
 								System.out.println("end game!!");
 							}
 						}
@@ -120,9 +123,11 @@ public class ScoreSheetGUI implements Observer {
 
 	@Override
 	public int getId() {
+		//getter method
 		return idVal;
 	}
 	
+	//default implementation for adapter class
 	public void update(ArrayList<Dice> result) {}
 
 }

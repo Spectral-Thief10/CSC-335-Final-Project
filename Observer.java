@@ -1,3 +1,7 @@
+/*
+ *  Observer Interafce for the Scoresheet and DiceSet GUI
+ */
+
 import java.util.ArrayList;
 
 import model.Dice;
