@@ -15,7 +15,7 @@ import model.Dice;
 import model.DiceSet;
 import model.Player;
 
-public class testPlayer {
+public class TestPlayer {
 	Player p1 = new Player(1);
 
 	@Test

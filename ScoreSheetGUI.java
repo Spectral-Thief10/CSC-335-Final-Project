@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.media.AudioClip;
+import model.Dice;
 import model.ScoreSheet;
 import model.ScoreSheet.Category;
 
@@ -27,7 +28,7 @@ public class ScoreSheetGUI implements Observer {
 	// Note: you can change the hbox to the most convenient layout. Thought it might
 	// give be easier to manipulate than this.add()
 
-	public ScoreSheetGUI( HBox hbox, String playerName, int id, GameManager gm)
+	public ScoreSheetGUI( HBox hbox, String playerName, int id, GameManager gm) {
 		 /* Constructor
 		 * 
 		 * @param hbox: The hbox in which the scoresheet is to be displayed
@@ -121,5 +122,7 @@ public class ScoreSheetGUI implements Observer {
 	public int getId() {
 		return idVal;
 	}
+	
+	public void update(ArrayList<Dice> result) {}
 
 }

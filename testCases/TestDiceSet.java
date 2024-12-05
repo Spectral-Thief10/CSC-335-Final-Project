@@ -7,7 +7,7 @@ import model.DiceSet;
 
 import java.util.ArrayList;
 
-public class testDiceSet {
+public class TestDiceSet {
     DiceSet d = new DiceSet();
     
     @Test

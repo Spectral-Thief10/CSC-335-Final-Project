@@ -18,7 +18,7 @@ import model.EasyMode;
 import model.Mode;
 import model.ScoreSheet.Category;
 
-public class testEasyMode {
+public class TestEasyMode {
 	@Test
 	public void testConstructor() {
 		ArrayList<Dice> diceSet = TestHelper.createResult(new int[] { 6, 6, 6, 6, 6 });

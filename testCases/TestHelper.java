@@ -11,8 +11,8 @@ import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
 @Suite
-@SelectClasses({ TestCalculator.class, testCPU.class, testDiceSet.class, testEasyMode.class, testGameManager.class,
-		testHardMode.class, testPlayer.class, TestScoreSheet.class })
+@SelectClasses({ TestCalculator.class, TestCPU.class, TestDiceSet.class, TestEasyMode.class, TestGameManager.class,
+		TestHardMode.class, TestPlayer.class, TestScoreSheet.class })
 public class TestHelper {
 	public static ArrayList<Dice> createResult(int[] dice) {
 		/*

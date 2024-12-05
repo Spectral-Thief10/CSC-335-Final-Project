@@ -41,7 +41,7 @@ public class GameView extends Application {
 
 	private static Stage primaryStage;
 	private static AudioClip buttonPress = new AudioClip("file:UIAssets/buttonPress.mp3");
-	private static AudioClip diceRoll = new AudioClip("file:UIAssets/diceRoll.mp3");
+
 	private static int playerNumber = 0;
 	private static Optional<Mode> mode = Optional.ofNullable(null);
 
@@ -228,8 +228,6 @@ public class GameView extends Application {
 	private static void gameScreen(Stage primaryStage, GameManager game) {
 		BorderPane BPane = new BorderPane();
 		GridPane root = new GridPane();
-		boolean[] rerolls = {true, true, true, true, true};
-		ArrayList<Dice> result = game.getDiceSet();
 		
 		// configure score sheet
 		HBox scoreRoot = new HBox();
@@ -250,97 +248,8 @@ public class GameView extends Application {
 		diceRoot.setPadding(new Insets(10));
 		diceRoot.setSpacing(10);
 		diceRoot.setAlignment(Pos.CENTER);
-
-		HBox diceRow = new HBox();
-		diceRow.setSpacing(15);
-		for (int i = 0; i < 5; i++) {
-			Button diceButton = new Button(Integer.toString(i));
-			ImageView diceFace = new ImageView(new Image("UIAssets/dice"+result.get(i).VALUE+".png", 100, 100, true, false));
-			diceButton.setGraphic(diceFace);
-			diceButton.setPadding(new Insets(-1, -1, -1, -1));
-			diceButton.setStyle("-fx-border-color: transparent; -fx-background-color: transparent; -fx-text-fill: transparent");
-			diceButton.setMaxWidth(100);	
-			
-			diceButton.setOnAction(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent e) {
-					buttonPress.play();
-					if (!rerolls[diceButton.getText().charAt(0)-'0']) {
-						ColorAdjust undarken = new ColorAdjust();
-						undarken.setBrightness(0);
-						diceButton.setEffect(undarken);
-						rerolls[diceButton.getText().charAt(0)-'0'] = true;
-					} else {
-						ColorAdjust darken = new ColorAdjust();
-						darken.setBrightness(-0.9);
-						diceButton.setEffect(darken);
-						rerolls[diceButton.getText().charAt(0)-'0'] = false;
-					}
-				}
-			});
-			diceRow.getChildren().add(diceButton);
-		}
-
-
-		Button buttonRoll = new Button("Roll Dice");
-		buttonRoll.setFont(Font.font("Times New Roman", 20));
-		buttonRoll.setStyle("-fx-background-color: #FCD060;");
-		buttonRoll.setOnAction(e -> {
-			if (game.canRoll()) {
-				diceRoll.play();
-				
-				// rerolls, grabs new information from the game manager
-				game.reRoll(rerolls);
-				for (int i = 0; i < 5; i++) {
-					rerolls[i] = true;
-					result.set(i, game.getDiceSet().get(i));
-				}
-				diceRoot.getChildren().clear();
-				diceRow.getChildren().clear();
-				
-				// re render dice
-				for (int i = 0; i < 5; i++) {
-					Button diceButton = new Button(Integer.toString(i));
-					ImageView diceFace = new ImageView(new Image("UIAssets/dice"+result.get(i).VALUE+".png", 100, 100, true, false));
-					diceButton.setGraphic(diceFace);
-					diceButton.setPadding(new Insets(-1, -1, -1, -1));
-					diceButton.setStyle("-fx-border-color: transparent; -fx-background-color: transparent; -fx-text-fill: transparent");
-					diceButton.setMaxWidth(100);	
-					if (game.canRoll()) {
-						diceButton.setOnAction(new EventHandler<ActionEvent>() {
-							@Override
-							public void handle(ActionEvent e) {
-								buttonPress.play();
-								if (!rerolls[diceButton.getText().charAt(0)-'0']) {
-									ColorAdjust undarken = new ColorAdjust();
-									undarken.setBrightness(0);
-									diceButton.setEffect(undarken);
-									rerolls[diceButton.getText().charAt(0)-'0'] = true;
-								} else {
-									ColorAdjust darken = new ColorAdjust();
-									darken.setBrightness(-0.9);
-									diceButton.setEffect(darken);
-									rerolls[diceButton.getText().charAt(0)-'0'] = false;
-								}
-							}
-						});
-					} 
-					
-					diceRow.getChildren().add(diceButton);
-				}
-			}
-			
-			// determine if the roll button needs to be displayed
-			diceRoot.getChildren().add(diceRow);
-			if (!game.isCPUTurn() && game.canRoll()) {
-				diceRoot.getChildren().add(buttonRoll);
-			}
-		});
 		
-		diceRoot.getChildren().add(diceRow);
-		diceRoot.getChildren().add(buttonRoll);
-		diceRow.setAlignment(Pos.CENTER);
-		diceRoot.setAlignment(Pos.CENTER);
+		game.registerObserver(-1, new DiceSetGUI(diceRoot, game));
 		/* DICE DISPLAY LOGIC */
 		
 		root.setPadding(new Insets(20));
