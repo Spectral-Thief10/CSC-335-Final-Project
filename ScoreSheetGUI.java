@@ -1,4 +1,7 @@
-//Adapter Class for Scoresheet GUI that implements observer
+/*
+ * Adapter Class for Scoresheet GUI that implements observer
+ * 
+ */
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,7 +88,8 @@ public class ScoreSheetGUI implements Observer {
 
 				}
 			});
-
+			
+			//add the category to the hashmap
 			map.put(category, categoryButton);
 			gridPane.add(categoryButton, 0, row);
 			row++;
@@ -110,12 +114,18 @@ public class ScoreSheetGUI implements Observer {
 	}
 
 	public void makeCurrentPlayer() {
+		/*
+		 * 	Updates the player's heading to green
+		 */
 		heading.setStyle(
 				"-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white; -fx-padding: 10px; -fx-background-color: green; -fx-font-family: 'Courier New';");
 
 	}
 
 	public void removeCurrentPlayer() {
+		/*
+		 * Resets the player's heading to black
+		 */
 		heading.setStyle(
 				"-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white; -fx-padding: 10px; -fx-background-color: black; -fx-font-family: 'Courier New';");
 

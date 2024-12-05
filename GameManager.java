@@ -27,7 +27,6 @@ public class GameManager {
 		 * 
 		 * @param num (int): number of players
 		 * 
-		 * @param gameMode(Mode): hard, easy
 		 */
 
 		activePlayers = new ArrayList<Player>();
@@ -47,7 +46,7 @@ public class GameManager {
 
 	public GameManager(int num, Mode gameMode) {
 		/*
-		 * Constructor for GameManager when CPU wants to be added
+		 * Constructor for GameManager when CPU has to be added
 		 * 
 		 * @param num (int): number of players
 		 * 
@@ -68,24 +67,29 @@ public class GameManager {
 		currentPlayer = activePlayers.get(0);
 	}
 
-	public ArrayList<Category> getCurrentPlayerCategories() {
-
-		// make sure this is being used in the GUI, otherwise delete it
-		return currentPlayer.categoriesLeft();
-
-	}
-
 	public void startsGame() {
+		/*
+		 * It sets the initial current Player
+		 */
 
 		observers.get(currentPlayer.getID()).makeCurrentPlayer();
 
 	}
 
 	public int getWinner() {
+
+		/*
+		 * This function returns the ID number of the player who won
+		 * 
+		 * @return the winner id
+		 */
 		if (wonPlayers.size() == 0) {
 			return -1;
 		}
 		Player winner = wonPlayers.get(0);
+
+		// loops over the players done with the game and finds the one with the highest
+		// total score
 		for (Player p : wonPlayers) {
 			if (p.getTotalScore() > winner.getTotalScore()) {
 				winner = p;
@@ -105,6 +109,7 @@ public class GameManager {
 
 		Player prevPlayer = currentPlayer;
 
+		// replaces current player with the next player
 		if (!(activePlayers.size() == 1)) {
 			int indexOfCurrentPlayer = activePlayers.indexOf(currentPlayer);
 			currentPlayer = activePlayers.get((indexOfCurrentPlayer + 1) % activePlayers.size());
@@ -122,27 +127,33 @@ public class GameManager {
 		}
 
 		// if the next player is the CPU, decide the next set of moves for it
-		if (isCPUTurn()) {			
-			
+		if (isCPUTurn()) {
+
 			CPU cpuPlayer = (CPU) currentPlayer;
 			changeCurrentPlayer(cpuPlayer.getID());
 
+			// while there are rolls left
 			while (diceSet.canRoll()) {
+
+				// let the cpu decide the next reroll
 				boolean[] rerolls = cpuPlayer.chooseScoreRerolls(diceSet.getResult());
 				diceSet.rollDiceAt(rerolls);
-				observers.get(-1).update(getDiceSet());			
+				observers.get(-1).update(getDiceSet());
 
 			}
-			
+
+			// the cpu decides what category to choose and updates it
 			boolean flag = false;
 			ScoreSheet.Category category = cpuPlayer.getCategory();
 			if (category != null) {
 				flag = updateScore(category);
 			}
 
+			// if update was successful
 			if (flag) {
 				boolean playerFlag = nextPlayer();
 
+				// if next player was successful
 				if (!playerFlag) {
 					// add the end screen here
 					System.out.println("end game!!");
@@ -152,6 +163,7 @@ public class GameManager {
 
 		}
 
+		// update the GUI using observers
 		resetDices();
 		observers.get(-1).update(getDiceSet());
 		changeCurrentPlayer(currentPlayer.getID());
@@ -160,22 +172,46 @@ public class GameManager {
 	}
 
 	public boolean isCPUTurn() {
+		/*
+		 * Checks if current player is an instance of CPU
+		 * 
+		 * @return true if the currentPlayer is an instance of CPU otherwise return
+		 * false
+		 */
 		return currentPlayer instanceof CPU;
 	}
 
 	public void registerObserver(int id, Observer observer) {
+		/*
+		 * Adds register
+		 * 
+		 * @param id: the key for thr hashmap
+		 * 
+		 * @param observer: the observer object to be added
+		 */
 		observers.put(id, observer);
 	}
 
 	public void deregisterObserver(int id) {
+		/*
+		 * Adds register
+		 * 
+		 * @param id: the key for the hashmap
+		 */
+
 		observers.remove(id);
 	}
 
 	public void changeCurrentPlayer(int id) {
+		/*
+		 * It reflects the current player changes in the GUI using observers
+		 * 
+		 * @param id: player id which acts like a key for the hasmap
+		 * 
+		 */
 
 		for (Integer key : observers.keySet()) {
 			if (key == id) {
-				System.out.println(key);
 				observers.get(key).makeCurrentPlayer();
 			}
 
