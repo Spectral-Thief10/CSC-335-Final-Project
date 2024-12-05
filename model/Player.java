@@ -1,3 +1,8 @@
+/*
+ * File: Player.java
+ * Purpose: this file creates the player for the game of yahtzee
+ */
+
 package model;
 
 import java.util.ArrayList;
@@ -18,18 +23,28 @@ public class Player {
 		}
 	}
 
+	/*
+	 * returns an integer
+	 */
 	public int getID() {
 		return id;
 	}
+
 	/*
+	 * This gives the client access to remove a given category from the categories
+	 * ArrayList from outside the class returns void
+	 * 
 	 * @pre category != null
 	 */
 	public void removeCategory(Category category) {
-		if(categories.contains(category)) {
+		if (categories.contains(category)) {
 			categories.remove(category);
 		}
 	}
+
 	/*
+	 * This returns the score for a given category returns int
+	 * 
 	 * @pre category != null
 	 */
 	public Integer getScoreCategory(Category category) {
@@ -40,7 +55,10 @@ public class Player {
 		return scoreSheet.getCurrentScore();
 	}
 
-
+	/*
+	 * This gets all the categories that are left for the player returns
+	 * ArrayList<Category>
+	 */
 	public ArrayList<Category> categoriesLeft() {
 		ArrayList<Category> categories = new ArrayList<>();
 		for (Category i : this.categories) {
@@ -49,17 +67,22 @@ public class Player {
 		return categories;
 	}
 
-
+	/*
+	 * This checks to see if the scoreSheet is complete returns boolean
+	 */
 	public boolean isDone() {
 		return scoreSheet.isComplete();
 	}
 
 	/*
+	 * This puts a diceSet to be scored into the category that was chosen returns
+	 * void
+	 * 
 	 * @pre category != null && diceSet.size() == 5
 	 */
 	public void putScore(Category category, ArrayList<Dice> diceSet) {
 		scoreSheet.setScoreCategory(category, diceSet);
-		if(categories.contains(category)) {
+		if (categories.contains(category)) {
 			categories.remove(category);
 		}
 

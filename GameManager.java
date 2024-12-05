@@ -23,7 +23,9 @@ public class GameManager {
 		 * @param num (int): number of players
 		 * @param gameMode(Mode): hard, easy
 		 */
-
+		
+		
+		
 		activePlayers = new ArrayList<Player>();
 		wonPlayers = new ArrayList<Player>();
 		observers = new HashMap<>();
@@ -66,6 +68,26 @@ public class GameManager {
 		return currentPlayer.categoriesLeft();
 
 	}
+	
+	public void startsGame() {
+		
+		observers.get(currentPlayer.getID()).makeCurrentPlayer();
+		
+	}
+	
+	public int getWinner() {
+        if (wonPlayers.size() == 0) {
+            return -1;
+        }
+        Player winner = wonPlayers.get(0);
+        for (Player p : wonPlayers) {
+            if (p.getTotalScore() > winner.getTotalScore()) {
+                winner = p;
+            }
+        }
+
+        return winner.getID();
+    }
 
 	public boolean nextPlayer() {
 		/*
@@ -101,26 +123,31 @@ public class GameManager {
 			while (diceSet.canRoll()) {
 				boolean[] rerolls = cpuPlayer.chooseScoreRerolls(diceSet.getResult());
 				diceSet.rollDiceAt(rerolls);
-				notifyAllObservers();
+				//notifyAllObservers();
 
 			}
 
 			ScoreSheet.Category category = cpuPlayer.getCategory();
 			if (category != null) {
 				cpuPlayer.putScore(category, diceSet.getResult());
-				notifyAllObservers();
+				//notifyAllObservers();
 			}
 
-			resetDices();
-			notifyAllObservers();
+			//resetDices();
+			//notifyAllObservers();
 
 			if (cpuPlayer.isDone()) {
 				activePlayers.remove(cpuPlayer);
 				wonPlayers.add(cpuPlayer);
-				notifyAllObservers();
+				//notifyAllObservers();
 			}
 
 		}
+		
+		diceSet.reset();
+		diceSet.rollAll();
+		//update the GUI for diceSet
+		changeCurrentPlayer(currentPlayer.getID());
 		
 		return true;
 	}
@@ -128,15 +155,6 @@ public class GameManager {
 	public boolean isCPUTurn() {
 		return currentPlayer instanceof CPU;
 	}
-
-	public void notifyAllObservers() {
-		for (Observer observer : observers.values()) {
-			if (observer != null) {
-				//observer.update();
-			}
-		}
-	}
-
 	
 	public void registerObserver(int id, Observer observer) {
 		observers.put(id, observer);
@@ -145,13 +163,22 @@ public class GameManager {
 	public void deregisterObserver(int id) {
 		observers.remove(id);
 	}
+
 	
-	public void notifyObserver(int id) {
-        Observer observer = observers.get(id);
-        if (observer != null) {
-           // observer.update();
-        }
-    }
+	public void changeCurrentPlayer(int id) {	
+
+		
+		for (Integer key : observers.keySet()) {
+			if(key==id) {
+				observers.get(key).makeCurrentPlayer();;
+			}
+			
+			else {
+				observers.get(key).removeCurrentPlayer();
+			}
+		}
+		
+	}
 	
 	public int getActivePlayers() {
 		/*
@@ -169,27 +196,12 @@ public class GameManager {
 		return wonPlayers.size();
 	}
 	
-	public int getWinner() {
-		if (wonPlayers.size() == 0) {
-			return -1;
-		}
-		Player winner = wonPlayers.get(0);
-		for (Player p : wonPlayers) {
-			if (p.getTotalScore() > winner.getTotalScore()) {
-				winner = p;
-			}
-		}
-		
-		return winner.getID();
-	}
-	
 	public int getPlayerIndex() {
 		/*
 		 * Returns the index of the current player
-		 * Used for testing
 		 */
 		
-		return activePlayers.indexOf(currentPlayer);
+		return currentPlayer.getID();
 	}
 	
 	public boolean updateScore(Category category) {
@@ -206,6 +218,8 @@ public class GameManager {
 
 		if (categories.contains(category)) {
 			currentPlayer.putScore(category, getDiceSet());
+			observers.get(currentPlayer.getID()).update(category,currentPlayer.getScoreCategory(category));
+			
 			return true;
 		}
 
