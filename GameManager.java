@@ -169,6 +169,20 @@ public class GameManager {
 		return wonPlayers.size();
 	}
 	
+	public int getWinner() {
+		if (wonPlayers.size() == 0) {
+			return -1;
+		}
+		Player winner = wonPlayers.get(0);
+		for (Player p : wonPlayers) {
+			if (p.getTotalScore() > winner.getTotalScore()) {
+				winner = p;
+			}
+		}
+		
+		return winner.getID();
+	}
+	
 	public int getPlayerIndex() {
 		/*
 		 * Returns the index of the current player

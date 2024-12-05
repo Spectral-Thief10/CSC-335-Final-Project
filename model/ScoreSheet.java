@@ -86,10 +86,8 @@ public class ScoreSheet {
 			categoryScores.put(category, score);
 
 			return true;
-		} else if (category == Category.YAHTZEE && categoryScores.get(category) != 0 && Calculator.yahtzeeCalculator(dice) > 0) {
-			// calculate yahtzee bonus
-			categoryScores.put(category, categoryScores.get(category)+100);
-		}
+		} 
+		
 		return false;
 	}
 
@@ -130,14 +128,6 @@ public class ScoreSheet {
 		}
 
 		return false;
-	}
-	
-	public int yahtzeeBonus() {
-		if (categoryScores.get(Category.YAHTZEE) == null || categoryScores.get(Category.YAHTZEE) == 50) {
-			return 0;
-		}
-		
-		return (categoryScores.get(Category.YAHTZEE) - 50) / 100;
 	}
 
 	private int totalScoreForUpperSection() {
