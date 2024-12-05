@@ -103,24 +103,21 @@ public class GameManager {
 		 * @return boolean: true we successfully moved to the next player, false if
 		 */
 
-		Player prevPlayer = currentPlayer;
-
-		if (!(activePlayers.size() == 1)) {
-			int indexOfCurrentPlayer = activePlayers.indexOf(currentPlayer);
-			currentPlayer = activePlayers.get((indexOfCurrentPlayer + 1) % activePlayers.size());
-		}
-
 		// checks if the current player is done
-		if (prevPlayer.isDone()) {
-			activePlayers.remove(prevPlayer);
-			wonPlayers.add(prevPlayer);
+		if (currentPlayer.isDone()) {
+			activePlayers.remove(currentPlayer);
+			wonPlayers.add(currentPlayer);
 		}
 
+		// game is over
 		if (activePlayers.size() == 0) {
-			currentPlayer = null;
 			return false;
 		}
-
+		
+		// get new current player
+		int indexOfCurrentPlayer = activePlayers.indexOf(currentPlayer);
+		currentPlayer = activePlayers.get((indexOfCurrentPlayer + 1) % activePlayers.size());
+	
 		// if the next player is the CPU, decide the next set of moves for it
 		if (isCPUTurn()) {			
 			
@@ -144,14 +141,13 @@ public class GameManager {
 				boolean playerFlag = nextPlayer();
 
 				if (!playerFlag) {
-					// add the end screen here
-					System.out.println("end game!!");
+					changeCurrentPlayer(-100);
+					GameView.endScreen(this);
+					return false;
 				}
-
 			}
-
-		}
-
+		} 
+		
 		resetDices();
 		observers.get(-1).update(getDiceSet());
 		changeCurrentPlayer(currentPlayer.getID());
@@ -172,17 +168,29 @@ public class GameManager {
 	}
 
 	public void changeCurrentPlayer(int id) {
-
 		for (Integer key : observers.keySet()) {
 			if (key == id) {
 				System.out.println(key);
 				observers.get(key).makeCurrentPlayer();
 			}
-
 			else {
 				observers.get(key).removeCurrentPlayer();
 			}
 		}
+	}
+	
+	public boolean playerIsDone(int id) {
+		if (wonPlayers.size() <= 0) {
+			return false;
+		}
+		
+		for (Player p : wonPlayers) {
+			if (p.getID() == id) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	public int getActivePlayers() {

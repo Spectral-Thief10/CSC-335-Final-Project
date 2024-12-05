@@ -69,7 +69,6 @@ public class DiceSetGUI implements Observer {
 			if (game.canRoll()) {
 				diceRoll.play();
 				game.updateDices(rerolls);
-				
 			}
 		});
 		

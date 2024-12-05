@@ -41,6 +41,7 @@ public class GameView extends Application {
 
 	private static Stage primaryStage;
 	private static AudioClip buttonPress = new AudioClip("file:UIAssets/buttonPress.mp3");
+	private static HBox scoreRoot;
 
 	private static int playerNumber = 0;
 	private static Optional<Mode> mode = Optional.ofNullable(null);
@@ -48,15 +49,16 @@ public class GameView extends Application {
 	@Override
 	public void start(Stage arg0) throws Exception {
 		primaryStage = arg0;
-		primaryPage(primaryStage);
+		primaryPage();
 		primaryStage.show();
+		scoreRoot = new HBox();
 	}
 
 	public static void main(String[] args) {
 		Application.launch(args);
 	}
 
-	private static void primaryPage(Stage primaryStage) {
+	private static void primaryPage() {
 		BorderPane BPane = new BorderPane();
 		VBox root = new VBox(200);
 		
@@ -73,19 +75,19 @@ public class GameView extends Application {
 		button1.setFont(Font.font("Times New Roman", 20));
 		button1.setStyle("-fx-background-color: #FCD060;");
 		button1.setPrefWidth(250);
-		button1.setOnAction(e -> { buttonPress.play(); rulesPage(primaryStage);});
+		button1.setOnAction(e -> { buttonPress.play(); rulesPage();});
 
 		Button button2 = new Button("Singleplayer");
 		button2.setFont(Font.font("Times New Roman", 20));
 		button2.setStyle("-fx-background-color: #FCD060;");
 		button2.setPrefWidth(250);
-		button2.setOnAction(e -> { buttonPress.play(); setupScreenSingle(primaryStage);});
+		button2.setOnAction(e -> { buttonPress.play(); setupScreenSingle();});
 		
 		Button button3 = new Button("Multiplayer");
 		button3.setFont(Font.font("Times New Roman", 20));
 		button3.setStyle("-fx-background-color: #FCD060;");
 		button3.setPrefWidth(250);
-		button3.setOnAction(e -> { buttonPress.play(); setupScreenMulti(primaryStage);});
+		button3.setOnAction(e -> { buttonPress.play(); setupScreenMulti();});
 
 		VBox buttons = new VBox(30);
 		buttons.getChildren().addAll(button1, button2, button3);
@@ -102,7 +104,7 @@ public class GameView extends Application {
 
 	}
 
-	private static void rulesPage(Stage primaryStage) {
+	private static void rulesPage() {
 		BorderPane BPane = new BorderPane();
 
 		Text heading = new Text("Yahtzee Rules:");
@@ -125,7 +127,7 @@ public class GameView extends Application {
 		backButton.setPrefWidth(150);
 		backButton.setPrefHeight(50);
 
-		backButton.setOnAction(e -> { buttonPress.play(); primaryPage(primaryStage);});
+		backButton.setOnAction(e -> { buttonPress.play(); primaryPage();});
 
 		VBox rulesRoot = new VBox(20);
 		rulesRoot.getChildren().addAll(heading, rules, backButton);
@@ -141,7 +143,7 @@ public class GameView extends Application {
 
 	}
 
-	private static void setupScreenSingle(Stage primaryStage) {
+	private static void setupScreenSingle() {
 		BorderPane BPane = new BorderPane();
 		VBox root = new VBox(50);
 		HBox modeContainer = new HBox(20);
@@ -161,7 +163,7 @@ public class GameView extends Application {
 			public void handle(ActionEvent e) {
 				buttonPress.play();
 				mode = Optional.ofNullable(Mode.HARD);
-				gameScreen(primaryStage, new GameManager(1, Mode.HARD));
+				gameScreen(new GameManager(1, Mode.HARD));
 			}
 		});
 		
@@ -173,7 +175,7 @@ public class GameView extends Application {
 			public void handle(ActionEvent e) {
 				buttonPress.play();
 				mode = Optional.ofNullable(Mode.EASY);
-				gameScreen(primaryStage, new GameManager(1, Mode.EASY));
+				gameScreen(new GameManager(1, Mode.EASY));
 			}
 		});
 		
@@ -189,7 +191,7 @@ public class GameView extends Application {
 		primaryStage.setScene(setupScene);
 	}
 	
-	private static void setupScreenMulti(Stage primaryStage) {
+	private static void setupScreenMulti() {
 		BorderPane BPane = new BorderPane();
 		VBox root = new VBox(50);
 		HBox buttons = new HBox(20);
@@ -209,7 +211,7 @@ public class GameView extends Application {
 				public void handle(ActionEvent e) {
 					buttonPress.play();
 					playerNumber = b.getText().charAt(0) - '0';
-					gameScreen(primaryStage, new GameManager(playerNumber));
+					gameScreen(new GameManager(playerNumber));
 				}
 			});
 			buttons.getChildren().add(b);
@@ -225,12 +227,12 @@ public class GameView extends Application {
 		primaryStage.setScene(setupScene);
 	}
 
-	private static void gameScreen(Stage primaryStage, GameManager game) {
+	private static void gameScreen(GameManager game) {
 		BorderPane BPane = new BorderPane();
 		GridPane root = new GridPane();
 		
 		// configure score sheet
-		HBox scoreRoot = new HBox();
+		scoreRoot = new HBox();
 		scoreRoot.setAlignment(Pos.CENTER);
 		root.add(scoreRoot, 0, 0);
 		if (mode.isEmpty()) {
@@ -263,13 +265,14 @@ public class GameView extends Application {
 		
 		Scene SceneGame = new Scene(BPane, 1300, 800);
 		primaryStage.setScene(SceneGame);
+		
+		game.startsGame();
 	}
 	
-	public static void endScreen(Stage primaryStage, GameManager game) {
+	public static void endScreen(GameManager game) {
 		BorderPane BPane = new BorderPane();
 		VBox root = new VBox(20);
 		
-		HBox scoreRoot = new HBox();
 		HBox buttonBar = new HBox(20);
 		
 		Button button1 = new Button("Main Menu");
@@ -279,7 +282,7 @@ public class GameView extends Application {
 			@Override
 			public void handle(ActionEvent e) {
 				buttonPress.play();
-				primaryPage(primaryStage);
+				primaryPage();
 			}
 		});
 		
@@ -292,9 +295,9 @@ public class GameView extends Application {
 				buttonPress.play();
 				
 				if (mode.isPresent()) {
-					gameScreen(primaryStage, new GameManager(1, mode.get()));
+					gameScreen(new GameManager(1, mode.get()));
 				} else {
-					gameScreen(primaryStage, new GameManager(playerNumber));
+					gameScreen(new GameManager(playerNumber));
 				}
 
 			}
@@ -302,7 +305,17 @@ public class GameView extends Application {
 		
 		buttonBar.getChildren().addAll(button1, button2);
 		
-		Text winnerLabel = new Text("Player " + game.getWinner() + " wins the game!");
+		Text winnerLabel = new Text();
+		if (mode.isPresent()) {
+			if (game.getWinner() == 2) {
+				winnerLabel.setText("The computer wins the game!");
+			} else {
+				winnerLabel.setText("You win the game!");
+			}
+		} else {
+			winnerLabel.setText("Player " + game.getWinner() + " wins the game!");
+		}
+		
 		winnerLabel.setFont(Font.font("Times New Roman", FontWeight.BOLD, 40));
 		winnerLabel.setStyle("-fx-fill: #FFFDD0;");
 		

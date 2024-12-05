@@ -73,11 +73,10 @@ public class ScoreSheetGUI implements Observer {
 
 						if (scoreflag) {
 							scorePress.play();
-							boolean flag = control.nextPlayer();
-							if (!flag) {
-								
-								//add the end screen here
-								System.out.println("end game!!");
+							boolean playerFlag = control.nextPlayer();
+							if (!playerFlag) {
+								removeCurrentPlayer();
+								GameView.endScreen(gm);
 							}
 						}
 
@@ -118,7 +117,6 @@ public class ScoreSheetGUI implements Observer {
 	public void removeCurrentPlayer() {
 		heading.setStyle(
 				"-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white; -fx-padding: 10px; -fx-background-color: black; -fx-font-family: 'Courier New';");
-
 	}
 
 	@Override
