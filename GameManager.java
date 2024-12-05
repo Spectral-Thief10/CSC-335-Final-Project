@@ -4,7 +4,10 @@ import java.util.HashMap;
 import model.Dice;
 import model.DiceSet;
 import model.Player;
+import model.ScoreSheet; 
 import model.ScoreSheet.Category;
+import model.Mode;
+import model.CPU;
 
 public class GameManager {
 
@@ -20,11 +23,14 @@ public class GameManager {
 		 * @param num (int): number of players
 		 * @param gameMode(Mode): hard, easy
 		 */
-
+		
+		
+		
 		activePlayers = new ArrayList<Player>();
 		wonPlayers = new ArrayList<Player>();
 		observers = new HashMap<>();
 		diceSet = new DiceSet();
+		resetDices();
 
 		for (int i = 1; i <= num; i++) {
 			activePlayers.add(new Player(i));
@@ -46,12 +52,13 @@ public class GameManager {
 		wonPlayers = new ArrayList<Player>();
 		diceSet = new DiceSet();
 		observers = new HashMap<>();
+		resetDices();
 
 		for (int i = 1; i <= num; i++) {
 			activePlayers.add(new Player(i));
 		}
 		
-		activePlayers.add(new CPU(gameMode,num+1,diceSet));
+		activePlayers.add(new CPU(gameMode,num+1,diceSet.getResult()));
 		currentPlayer = activePlayers.get(0);
 	}
 
@@ -61,6 +68,26 @@ public class GameManager {
 		return currentPlayer.categoriesLeft();
 
 	}
+	
+	public void startsGame() {
+		
+		observers.get(currentPlayer.getID()).makeCurrentPlayer();
+		
+	}
+	
+	public int getWinner() {
+        if (wonPlayers.size() == 0) {
+            return -1;
+        }
+        Player winner = wonPlayers.get(0);
+        for (Player p : wonPlayers) {
+            if (p.getTotalScore() > winner.getTotalScore()) {
+                winner = p;
+            }
+        }
+
+        return winner.getID();
+    }
 
 	public boolean nextPlayer() {
 		/*
@@ -89,49 +116,45 @@ public class GameManager {
 		}
 		
 		//if the next player is the CPU, decide the next set of moves for it
-		if (currentPlayer instanceof CPU) {
+		if (isCPUTurn()) {
 
 			CPU cpuPlayer = (CPU) currentPlayer;
 
 			while (diceSet.canRoll()) {
-				boolean[] rerolls = cpuPlayer.chooseScoreRerolls(diceSet);
+				boolean[] rerolls = cpuPlayer.chooseScoreRerolls(diceSet.getResult());
 				diceSet.rollDiceAt(rerolls);
-				notifyAllObservers();
+				//notifyAllObservers();
 
 			}
 
 			ScoreSheet.Category category = cpuPlayer.getCategory();
 			if (category != null) {
 				cpuPlayer.putScore(category, diceSet.getResult());
-				notifyAllObservers();
+				//notifyAllObservers();
 			}
 
-			diceSet.reset();
-			notifyAllObservers();
-
-			boolean[] rerollAll = { true, true, true, true, true };
-			diceSet.rollDiceAt(rerollAll);
-			notifyAllObservers();
+			//resetDices();
+			//notifyAllObservers();
 
 			if (cpuPlayer.isDone()) {
 				activePlayers.remove(cpuPlayer);
 				wonPlayers.add(cpuPlayer);
-				notifyAllObservers();
+				//notifyAllObservers();
 			}
 
 		}
 		
+		diceSet.reset();
+		diceSet.rollAll();
+		//update the GUI for diceSet
+		changeCurrentPlayer(currentPlayer.getID());
+		
 		return true;
 	}
-
-	public void notifyAllObservers() {
-		for (Observer observer : observers.values()) {
-			if (observer != null) {
-				observer.update();
-			}
-		}
+	
+	public boolean isCPUTurn() {
+		return currentPlayer instanceof CPU;
 	}
-
 	
 	public void registerObserver(int id, Observer observer) {
 		observers.put(id, observer);
@@ -140,13 +163,22 @@ public class GameManager {
 	public void deregisterObserver(int id) {
 		observers.remove(id);
 	}
+
 	
-	public void notifyObserver(int id) {
-        Observer observer = observers.get(id);
-        if (observer != null) {
-            observer.update();
-        }
-    }
+	public void changeCurrentPlayer(int id) {	
+
+		
+		for (Integer key : observers.keySet()) {
+			if(key==id) {
+				observers.get(key).makeCurrentPlayer();;
+			}
+			
+			else {
+				observers.get(key).removeCurrentPlayer();
+			}
+		}
+		
+	}
 	
 	public int getActivePlayers() {
 		/*
@@ -167,15 +199,16 @@ public class GameManager {
 	public int getPlayerIndex() {
 		/*
 		 * Returns the index of the current player
-		 * Used for testing
 		 */
 		
-		return activePlayers.indexOf(currentPlayer);
+		return currentPlayer.getID();
 	}
 	
 	public boolean updateScore(Category category) {
 		/*
 		 * It updates the player score for that category
+		 * 
+		 * @param category is the category to update the score for
 		 * 
 		 * @return boolean: true if the scoresheet was successfully update, false if the
 		 * category has already been completed
@@ -185,16 +218,45 @@ public class GameManager {
 
 		if (categories.contains(category)) {
 			currentPlayer.putScore(category, getDiceSet());
+			observers.get(currentPlayer.getID()).update(category,currentPlayer.getScoreCategory(category));
+			
 			return true;
 		}
 
 		return false;
-
 	}
+	
+	public int getCurrentScore(Category category) {
+		/*
+		 * Gets the score for a specified category of the current player's scoresheet
+		 * 
+		 * @param category is the category to get the score for
+		 * 
+		 * @return integer (score for the specified category)
+		 */
+		
+		Integer retVal = currentPlayer.getScoreCategory(category);
+		
+		if (retVal == null) {
+			return 0;
+		} else {
+			return retVal;
+		}
+	}
+	
+	public int getCurrentTotalScore() {
+		 /* Gets the total score of the current players scoresheet
+		 * 
+		 * @return int total score
+		 */
+		 
+		return currentPlayer.getTotalScore();
+	}
+	
 
 	public ArrayList<Dice> getDiceSet() {
 		/*
-		 * Returns a copy of arraylist of diceset
+		 * @return  a copy of arraylist of diceset
 		 */
 
 		return diceSet.getResult();
@@ -206,6 +268,7 @@ public class GameManager {
 		 */
 
 		diceSet.reset();
+		diceSet.rollAll();
 	}
 
 	public void reRoll(boolean[] indexes) {
