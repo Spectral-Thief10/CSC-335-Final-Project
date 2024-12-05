@@ -182,6 +182,8 @@ public class GameManager {
 		/*
 		 * It updates the player score for that category
 		 * 
+		 * @param category is the category to update the score for
+		 * 
 		 * @return boolean: true if the scoresheet was successfully update, false if the
 		 * category has already been completed
 		 */
@@ -194,12 +196,39 @@ public class GameManager {
 		}
 
 		return false;
-
 	}
+	
+	public int getCurrentScore(Category category) {
+		/*
+		 * Gets the score for a specified category of the current player's scoresheet
+		 * 
+		 * @param category is the category to get the score for
+		 * 
+		 * @return integer (score for the specified category)
+		 */
+		
+		Integer retVal = currentPlayer.getScoreCategory(category);
+		
+		if (retVal == null) {
+			return 0;
+		} else {
+			return retVal;
+		}
+	}
+	
+	public int getCurrentTotalScore() {
+		 /* Gets the total score of the current players scoresheet
+		 * 
+		 * @return int total score
+		 */
+		 
+		return currentPlayer.getTotalScore();
+	}
+	
 
 	public ArrayList<Dice> getDiceSet() {
 		/*
-		 * Returns a copy of arraylist of diceset
+		 * @return  a copy of arraylist of diceset
 		 */
 
 		return diceSet.getResult();
