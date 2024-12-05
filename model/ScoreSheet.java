@@ -86,7 +86,8 @@ public class ScoreSheet {
 			categoryScores.put(category, score);
 
 			return true;
-		}
+		} 
+		
 		return false;
 	}
 

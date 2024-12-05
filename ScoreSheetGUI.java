@@ -19,6 +19,7 @@ public class ScoreSheetGUI implements Observer {
 	private Label heading;
 	private GridPane gridPane = new GridPane();
 	private int idVal;
+
 	private GameManager control;
 
 	private static AudioClip scorePress = new AudioClip("file:UIAssets/scorePress.mp3");
@@ -26,9 +27,8 @@ public class ScoreSheetGUI implements Observer {
 	// Note: you can change the hbox to the most convenient layout. Thought it might
 	// give be easier to manipulate than this.add()
 
-	public ScoreSheetGUI( HBox hbox, String playerName, int id, GameManager gm) {
-		/*
-		 * Constructor
+	public ScoreSheetGUI( HBox hbox, String playerName, int id, GameManager gm)
+		 /* Constructor
 		 * 
 		 * @param hbox: The hbox in which the scoresheet is to be displayed
 		 * 

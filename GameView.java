@@ -2,6 +2,8 @@
  * GUI Viewer
  */
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -15,6 +17,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -24,22 +29,24 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.media.AudioClip;
+
 import javafx.stage.Stage;
+import model.Dice;
 import model.DiceSet;
 import model.ScoreSheet;
 import model.Mode;
+import model.Player;
 
 public class GameView extends Application {
 
 	private static Stage primaryStage;
-	private static Optional<Mode> cpuMode;
 	private static AudioClip buttonPress = new AudioClip("file:UIAssets/buttonPress.mp3");
-	private static AudioClip scorePress = new AudioClip("file:UIAssets/scorePress.mp3");
 	private static AudioClip diceRoll = new AudioClip("file:UIAssets/diceRoll.mp3");
+	private static int playerNumber = 0;
+	private static Optional<Mode> mode = Optional.ofNullable(null);
 
 	@Override
 	public void start(Stage arg0) throws Exception {
-		cpuMode = Optional.ofNullable(null);
 		primaryStage = arg0;
 		primaryPage(primaryStage);
 		primaryStage.show();
@@ -52,6 +59,9 @@ public class GameView extends Application {
 	private static void primaryPage(Stage primaryStage) {
 		BorderPane BPane = new BorderPane();
 		VBox root = new VBox(200);
+		
+		playerNumber = 0;
+		mode = Optional.ofNullable(null);
 
 		Text welcomeMsg = new Text("Let's play Yahtzee!!");
 		welcomeMsg.setFont(Font.font("Times New Roman", FontWeight.BOLD, 100));
@@ -87,7 +97,7 @@ public class GameView extends Application {
 		BPane.setPadding(new Insets(20));
 		BPane.setCenter(root);
 		BPane.setStyle("-fx-background-image: url('UIAssets/woodGrain.jpeg'); -fx-background-size: cover; ");
-		Scene startingPage = new Scene(BPane, 1300, 700);
+		Scene startingPage = new Scene(BPane, 1300, 800);
 		primaryStage.setScene(startingPage);
 
 	}
@@ -125,7 +135,7 @@ public class GameView extends Application {
 		BPane.setCenter(rulesRoot);
 		BPane.setStyle("-fx-background-image: url('UIAssets/woodGrain.jpeg'); -fx-background-size: cover;");
 
-		Scene rulesScene = new Scene(BPane, 1300, 700);
+		Scene rulesScene = new Scene(BPane, 1300, 800);
 		primaryStage.setScene(rulesScene);
 		
 
@@ -150,8 +160,8 @@ public class GameView extends Application {
 			@Override
 			public void handle(ActionEvent e) {
 				buttonPress.play();
-				cpuMode = Optional.of(Mode.HARD);
-				gameScreen(primaryStage);
+				mode = Optional.ofNullable(Mode.HARD);
+				gameScreen(primaryStage, new GameManager(1, Mode.HARD));
 			}
 		});
 		
@@ -162,8 +172,8 @@ public class GameView extends Application {
 			@Override
 			public void handle(ActionEvent e) {
 				buttonPress.play();
-				cpuMode = Optional.of(Mode.EASY);
-				gameScreen(primaryStage);
+				mode = Optional.ofNullable(Mode.EASY);
+				gameScreen(primaryStage, new GameManager(1, Mode.EASY));
 			}
 		});
 		
@@ -175,7 +185,7 @@ public class GameView extends Application {
 		BPane.setPadding(new Insets(20));
 		BPane.setCenter(root);
 		BPane.setStyle("-fx-background-image: url('UIAssets/woodGrain.jpeg'); -fx-background-size: cover; ");
-		Scene setupScene = new Scene(BPane, 1300, 700);
+		Scene setupScene = new Scene(BPane, 1300, 800);
 		primaryStage.setScene(setupScene);
 	}
 	
@@ -190,7 +200,7 @@ public class GameView extends Application {
 		
 		root.getChildren().addAll(playerLabel, buttons);
 		
-		for (int i = 1; i <= 4; i++) {
+		for (int i = 2; i <= 4; i++) {
 			Button b = new Button(i + " Player");
 			b.setFont(Font.font("Times New Roman", 20));
 			b.setStyle("-fx-background-color: #FCD060;");
@@ -198,7 +208,8 @@ public class GameView extends Application {
 				@Override
 				public void handle(ActionEvent e) {
 					buttonPress.play();
-					gameScreen(primaryStage);
+					playerNumber = b.getText().charAt(0) - '0';
+					gameScreen(primaryStage, new GameManager(playerNumber));
 				}
 			});
 			buttons.getChildren().add(b);
@@ -210,91 +221,31 @@ public class GameView extends Application {
 		BPane.setPadding(new Insets(20));
 		BPane.setCenter(root);
 		BPane.setStyle("-fx-background-image: url('UIAssets/woodGrain.jpeg'); -fx-background-size: cover; ");
-		Scene setupScene = new Scene(BPane, 1300, 700);
+		Scene setupScene = new Scene(BPane, 1300, 800);
 		primaryStage.setScene(setupScene);
 	}
 
-	private static void gameScreen(Stage primaryStage) {
+	private static void gameScreen(Stage primaryStage, GameManager game) {
 		BorderPane BPane = new BorderPane();
-
-		GridPane Sheet = new GridPane();
-		Sheet.setHgap(30);
-		Sheet.setVgap(0);
-		Sheet.setStyle(
-				"-fx-border-color: black; -fx-border-width: 2px; -fx-padding: 10;-fx-background-color: #9c9c9c;");
-
-		Label category = new Label("Category");
-		category.setStyle("-fx-font-weight: bold;");
-
-		Label you = new Label("You");
-		you.setStyle("-fx-font-weight: bold;");
-
-		Label player1 = new Label("Player 1");
-		player1.setStyle("-fx-font-weight: bold;");
-
-		Sheet.add(category, 0, 0);
-		Sheet.add(you, 1, 0);
-		Sheet.add(player1, 2, 0);
-
-		String[] categories = { "Ones", "Twos", "Threes", "Fours", "Fives", "Sixes", "Sum", "Bonus", "Three of a kind",
-				"Four of a kind", "Full House", "Small straight", "Large straight", "Chance", "YAHTZEE",
-				"TOTAL SCORE" };
-
-		Label sum = new Label("0");
-		sum.setStyle("-fx-border-color: black; -fx-padding: 5; -fx-min-width: 50px; -fx-text-alignment: center;");
-
-		Label bonus = new Label();
-		bonus.setStyle("-fx-border-color: black; -fx-padding: 5; -fx-min-width: 50px; -fx-text-alignment: center;");
-
-		ScoreSheet scoreSheet = new ScoreSheet();
-		DiceSet diceSet = new DiceSet();
-		boolean[] hold = new boolean[5];
-
-		for (int i = 0; i < categories.length; i++) {
-			Label categoryType = new Label(categories[i]);
-			categoryType.setStyle("-fx-padding: 5; -fx-font-size: 14px;");
-
-			Label yourScore = new Label();
-			yourScore.setStyle(
-					"-fx-border-color: black; -fx-padding: 5; -fx-min-width: 50px; -fx-text-alignment: center;");
-
-			final int index = i;
-
-			yourScore.setOnMouseClicked(e -> {
-				if (yourScore.getText().isEmpty() && diceSet.hasResult()) {
-					int[] diceResults = new int[diceSet.getResult().size()];
-					for (int z = 0; z < diceSet.getResult().size(); ++z) {
-						diceResults[z] = diceSet.getResult().get(z).VALUE;
-					}
-
-					boolean updated = false;
-
-					if (updated) {
-						yourScore.setText(
-								String.valueOf(scoreSheet.getScoreCategory(ScoreSheet.Category.values()[index])));
-						diceSet.reset();
-					}
-				}
-			});
-
-			Label playerScore = new Label();
-			playerScore.setStyle(
-					"-fx-border-color: black; -fx-padding: 5; -fx-min-width: 50px; -fx-text-alignment: center;");
-
-			Sheet.add(categoryType, 0, i + 1);
-			Sheet.add(yourScore, 1, i + 1);
-			Sheet.add(playerScore, 2, i + 1);
-
-			if (categories[i].equals("Sum")) {
-				Sheet.add(sum, 1, i + 1);
-			} else if (categories[i].equals("Bonus")) {
-				Sheet.add(bonus, 1, i + 1);
+		GridPane root = new GridPane();
+		boolean[] rerolls = {true, true, true, true, true};
+		ArrayList<Dice> result = game.getDiceSet();
+		
+		// configure score sheet
+		HBox scoreRoot = new HBox();
+		scoreRoot.setAlignment(Pos.CENTER);
+		root.add(scoreRoot, 0, 0);
+		if (mode.isEmpty()) {
+			for (int i = 1; i <= game.getActivePlayers(); i++) {
+				game.registerObserver(i, new ScoreSheetGUI(scoreRoot, "Player " + i, i, game));
 			}
+		} else {
+			game.registerObserver(1, new ScoreSheetGUI(scoreRoot, "You", 1, game));
+			game.registerObserver(2, new ScoreSheetGUI(scoreRoot, "Computer", 2, game));
 		}
+	
 
-		BorderPane.setMargin(Sheet, new Insets(0, 0, 100, 50));
-		BPane.setLeft(Sheet);
-
+		/* DICE DISPLAY LOGIC */
 		VBox diceRoot = new VBox();
 		diceRoot.setPadding(new Insets(10));
 		diceRoot.setSpacing(10);
@@ -302,49 +253,159 @@ public class GameView extends Application {
 
 		HBox diceRow = new HBox();
 		diceRow.setSpacing(15);
-		diceRow.setAlignment(Pos.CENTER);
+		for (int i = 0; i < 5; i++) {
+			Button diceButton = new Button(Integer.toString(i));
+			ImageView diceFace = new ImageView(new Image("UIAssets/dice"+result.get(i).VALUE+".png", 100, 100, true, false));
+			diceButton.setGraphic(diceFace);
+			diceButton.setPadding(new Insets(-1, -1, -1, -1));
+			diceButton.setStyle("-fx-border-color: transparent; -fx-background-color: transparent; -fx-text-fill: transparent");
+			diceButton.setMaxWidth(100);	
+			
+			diceButton.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent e) {
+					buttonPress.play();
+					if (!rerolls[diceButton.getText().charAt(0)-'0']) {
+						ColorAdjust undarken = new ColorAdjust();
+						undarken.setBrightness(0);
+						diceButton.setEffect(undarken);
+						rerolls[diceButton.getText().charAt(0)-'0'] = true;
+					} else {
+						ColorAdjust darken = new ColorAdjust();
+						darken.setBrightness(-0.9);
+						diceButton.setEffect(darken);
+						rerolls[diceButton.getText().charAt(0)-'0'] = false;
+					}
+				}
+			});
+			diceRow.getChildren().add(diceButton);
+		}
+
 
 		Button buttonRoll = new Button("Roll Dice");
-		buttonRoll.setStyle(
-				"-fx-border-color: black; -fx-border-radius: 3px; -fx-font-size: 20px; -fx-background-color: #9c9c9c;");
-
+		buttonRoll.setFont(Font.font("Times New Roman", 20));
+		buttonRoll.setStyle("-fx-background-color: #FCD060;");
 		buttonRoll.setOnAction(e -> {
-			if (diceSet.canRoll()) {
+			if (game.canRoll()) {
 				diceRoll.play();
-				boolean[] roll = new boolean[5];
-				for (int i = 0; i < hold.length; i++) {
-					roll[i] = !hold[i];
+				
+				// rerolls, grabs new information from the game manager
+				game.reRoll(rerolls);
+				for (int i = 0; i < 5; i++) {
+					rerolls[i] = true;
+					result.set(i, game.getDiceSet().get(i));
 				}
-				diceSet.rollDiceAt(roll);
-
+				diceRoot.getChildren().clear();
 				diceRow.getChildren().clear();
-				for (int i = 0; i < diceSet.getResult().size(); i++) {
-					Label dLabel = new Label(String.valueOf(diceSet.getResult().get(i).VALUE));
-					if (hold[i]) {
-						dLabel.setStyle("-fx-font-size: 20px; -fx-background-color: #9c9c9c;; -fx-padding: 5px;");
-					} else {
-						dLabel.setStyle("-fx-font-size: 30px; -fx-border-color: black; -fx-padding: 10px;");
-					}
-
-					final int dIndex = i;
-					dLabel.setOnMouseClicked(event -> {
-						hold[dIndex] = !hold[dIndex];
-						if (hold[dIndex]) {
-							dLabel.setStyle("-fx-font-size: 20px; -fx-background-color: #9c9c9c;; -fx-padding: 5px;");
-						} else {
-							dLabel.setStyle("-fx-font-size: 30px; -fx-border-color: black; -fx-padding: 10px;");
-						}
-					});
-					diceRow.getChildren().add(dLabel);
+				
+				// re render dice
+				for (int i = 0; i < 5; i++) {
+					Button diceButton = new Button(Integer.toString(i));
+					ImageView diceFace = new ImageView(new Image("UIAssets/dice"+result.get(i).VALUE+".png", 100, 100, true, false));
+					diceButton.setGraphic(diceFace);
+					diceButton.setPadding(new Insets(-1, -1, -1, -1));
+					diceButton.setStyle("-fx-border-color: transparent; -fx-background-color: transparent; -fx-text-fill: transparent");
+					diceButton.setMaxWidth(100);	
+					if (game.canRoll()) {
+						diceButton.setOnAction(new EventHandler<ActionEvent>() {
+							@Override
+							public void handle(ActionEvent e) {
+								buttonPress.play();
+								if (!rerolls[diceButton.getText().charAt(0)-'0']) {
+									ColorAdjust undarken = new ColorAdjust();
+									undarken.setBrightness(0);
+									diceButton.setEffect(undarken);
+									rerolls[diceButton.getText().charAt(0)-'0'] = true;
+								} else {
+									ColorAdjust darken = new ColorAdjust();
+									darken.setBrightness(-0.9);
+									diceButton.setEffect(darken);
+									rerolls[diceButton.getText().charAt(0)-'0'] = false;
+								}
+							}
+						});
+					} 
+					
+					diceRow.getChildren().add(diceButton);
+				}
+			}
+			
+			// determine if the roll button needs to be displayed
+			diceRoot.getChildren().add(diceRow);
+			if (!game.isCPUTurn() && game.canRoll()) {
+				diceRoot.getChildren().add(buttonRoll);
+			}
+		});
+		
+		diceRoot.getChildren().add(diceRow);
+		diceRoot.getChildren().add(buttonRoll);
+		diceRow.setAlignment(Pos.CENTER);
+		diceRoot.setAlignment(Pos.CENTER);
+		/* DICE DISPLAY LOGIC */
+		
+		root.setPadding(new Insets(20));
+		root.setVgap(30);
+		root.add(diceRoot, 0, 1);
+		root.setAlignment(Pos.CENTER);
+		
+		BPane.setPadding(new Insets(20));
+		BPane.setCenter(root);
+		BPane.setStyle("-fx-background-image: url('UIAssets/woodGrain.jpeg'); -fx-background-size: cover; ");
+		
+		Scene SceneGame = new Scene(BPane, 1300, 800);
+		primaryStage.setScene(SceneGame);
+	}
+	
+	public static void endScreen(Stage primaryStage, GameManager game) {
+		BorderPane BPane = new BorderPane();
+		VBox root = new VBox(20);
+		
+		HBox scoreRoot = new HBox();
+		HBox buttonBar = new HBox(20);
+		
+		Button button1 = new Button("Main Menu");
+		button1.setFont(Font.font("Times New Roman", 20));
+		button1.setStyle("-fx-background-color: #FCD060;");
+		button1.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				buttonPress.play();
+				primaryPage(primaryStage);
+			}
+		});
+		
+		Button button2 = new Button("Play Again");
+		button2.setFont(Font.font("Times New Roman", 20));
+		button2.setStyle("-fx-background-color: #FCD060;");
+		button2.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				buttonPress.play();
+				
+				if (mode.isPresent()) {
+					gameScreen(primaryStage, new GameManager(1, mode.get()));
+				} else {
+					gameScreen(primaryStage, new GameManager(playerNumber));
 				}
 
 			}
 		});
+		
+		buttonBar.getChildren().addAll(button1, button2);
+		
+		Text winnerLabel = new Text("Player " + game.getWinner() + " wins the game!");
+		winnerLabel.setFont(Font.font("Times New Roman", FontWeight.BOLD, 40));
+		winnerLabel.setStyle("-fx-fill: #FFFDD0;");
+		
+		root.getChildren().addAll(scoreRoot, winnerLabel, buttonBar);
+		root.setAlignment(Pos.CENTER);
+		buttonBar.setAlignment(Pos.CENTER);
 
-		diceRoot.getChildren().addAll(diceRow, buttonRoll);
-		BPane.setCenter(diceRoot);
-
-		Scene SceneGame = new Scene(BPane, 800, 550);
+		BPane.setPadding(new Insets(20));
+		BPane.setCenter(root);
+		BPane.setStyle("-fx-background-image: url('UIAssets/woodGrain.jpeg'); -fx-background-size: cover; ");
+		
+		Scene SceneGame = new Scene(BPane, 1300, 800);
 		primaryStage.setScene(SceneGame);
 	}
 
