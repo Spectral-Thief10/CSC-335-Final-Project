@@ -237,11 +237,11 @@ public class GameView extends Application {
 		root.add(scoreRoot, 0, 0);
 		if (mode.isEmpty()) {
 			for (int i = 1; i <= game.getActivePlayers(); i++) {
-				game.registerObserver(i, new ScoreSheetGUI(scoreRoot, "Player " + i, i));
+				game.registerObserver(i, new ScoreSheetGUI(scoreRoot, "Player " + i, i, game));
 			}
 		} else {
-			game.registerObserver(1, new ScoreSheetGUI(scoreRoot, "You", 1));
-			game.registerObserver(2, new ScoreSheetGUI(scoreRoot, "Computer", 2));
+			game.registerObserver(1, new ScoreSheetGUI(scoreRoot, "You", 1, game));
+			game.registerObserver(2, new ScoreSheetGUI(scoreRoot, "Computer", 2, game));
 		}
 	
 
