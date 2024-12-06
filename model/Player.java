@@ -47,8 +47,12 @@ public class Player {
 	 * 
 	 * @pre category != null
 	 */
-	public int getScoreCategory(Category category) {
+	public Integer getScoreCategory(Category category) {
 		return scoreSheet.getScoreCategory(category);
+	}
+	
+	public int getTotalScore() {
+		return scoreSheet.getCurrentScore();
 	}
 
 	/*

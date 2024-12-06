@@ -16,7 +16,7 @@ import model.Dice;
 import model.Mode;
 import model.ScoreSheet.Category;
 
-public class testCPU {
+public class TestCPU {
 	DiceSet dice;
 	CPU cpu;
 

@@ -12,7 +12,7 @@ import model.HardMode;
 import model.Mode;
 import model.ScoreSheet.Category;
 
-public class testHardMode {
+public class TestHardMode {
 	@Test
 	public void testConstructor() {
 		ArrayList<Dice> diceSet = TestHelper.createResult(new int[] {6,6,6,6,6});

@@ -10,7 +10,7 @@ import model.Dice;
 import model.Mode;
 import model.ScoreSheet.Category;
 
-public class testGameManager {
+public class TestGameManager {
 	
 	private GameManager gmWithoutCPU = new GameManager(1);
 	private GameManager gmWithCpuEasy = new GameManager(2, Mode.EASY);

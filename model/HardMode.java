@@ -39,7 +39,7 @@ public class HardMode implements Strategy {
 		// gets the categories that are left for the CPU
 		ArrayList<Category> left = cpu.categoriesLeft();
 		// sets the category to YAHTZEE if a yahtzee was rolled
-		if (yahtzeeRoll() == true) {
+		if (yahtzeeRoll() == true && left.contains(Category.YAHTZEE)) {
 			return Category.YAHTZEE;
 		}
 		// checks to see if the dice match a category with the lowest odds of getting
