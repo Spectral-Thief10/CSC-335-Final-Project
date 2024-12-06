@@ -132,13 +132,17 @@ public class GameManager {
 			changeCurrentPlayer(cpuPlayer.getID());
 
 			// while there are rolls left
+			diceSet.reset();
+			diceSet.rollAll();
+			boolean[] rerolls = cpuPlayer.chooseScoreRerolls(diceSet.getResult());
 			while (diceSet.canRoll()) {
 				// let the cpu decide the next reroll
-				boolean[] rerolls = cpuPlayer.chooseScoreRerolls(diceSet.getResult());
+				rerolls = cpuPlayer.chooseScoreRerolls(diceSet.getResult());
 				diceSet.rollDiceAt(rerolls);
 				observers.get(-1).update(getDiceSet());			
 
 			}
+			cpuPlayer.chooseScoreRerolls(diceSet.getResult());
 			
 			// the cpu decides what category to choose and updates it
 			boolean flag = false;
