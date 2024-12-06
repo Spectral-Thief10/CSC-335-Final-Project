@@ -1,25 +1,17 @@
 /*
  * GUI Viewer
  */
+package view;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Optional;
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Slider;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.effect.ColorAdjust;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -31,16 +23,16 @@ import javafx.scene.text.Text;
 import javafx.scene.media.AudioClip;
 
 import javafx.stage.Stage;
-import model.Dice;
-import model.DiceSet;
-import model.ScoreSheet;
 import model.Mode;
-import model.Player;
+import controller.GameManager;
+
 
 public class GameView extends Application {
 
 	private static Stage primaryStage;
 	private static AudioClip buttonPress = new AudioClip("file:UIAssets/buttonPress.mp3");
+	private static AudioClip titleMusic = new AudioClip("file:UIAssets/titleMusic.mp3");
+	private static AudioClip endMusic = new AudioClip("file:UIAssets/endMusic.mp3");
 	private static HBox scoreRoot;
 
 	private static int playerNumber = 0;
@@ -81,13 +73,13 @@ public class GameView extends Application {
 		button2.setFont(Font.font("Times New Roman", 20));
 		button2.setStyle("-fx-background-color: #FCD060;");
 		button2.setPrefWidth(250);
-		button2.setOnAction(e -> { buttonPress.play(); setupScreenSingle();});
+		button2.setOnAction(e -> { buttonPress.play(); titleMusic.stop(); setupScreenSingle();});
 		
 		Button button3 = new Button("Multiplayer");
 		button3.setFont(Font.font("Times New Roman", 20));
 		button3.setStyle("-fx-background-color: #FCD060;");
 		button3.setPrefWidth(250);
-		button3.setOnAction(e -> { buttonPress.play(); setupScreenMulti();});
+		button3.setOnAction(e -> { buttonPress.play(); titleMusic.stop(); setupScreenMulti();});
 
 		VBox buttons = new VBox(30);
 		buttons.getChildren().addAll(button1, button2, button3);
@@ -99,9 +91,11 @@ public class GameView extends Application {
 		BPane.setPadding(new Insets(20));
 		BPane.setCenter(root);
 		BPane.setStyle("-fx-background-image: url('UIAssets/woodGrain.jpeg'); -fx-background-size: cover; ");
-		Scene startingPage = new Scene(BPane, 1300, 800);
+		Scene startingPage = new Scene(BPane, 1300, 900);
 		primaryStage.setScene(startingPage);
 
+		titleMusic.setVolume(0.45);
+		if (!titleMusic.isPlaying()) titleMusic.play();
 	}
 
 	private static void rulesPage() {
@@ -109,7 +103,7 @@ public class GameView extends Application {
 
 		Text heading = new Text("Yahtzee Rules:");
 		Text rules = new Text(
-				"1. Roll five dice and select the scoring category for each roll.\n2. Score categories include Full House, Three of a Kind, etc.\n"
+				"1. Roll five dice and select the scoring category for each roll.\n2. Pick which dice to keep and reroll the others for a better result.\n"
 						+ "3. Complete the scorecard by filling in all categories.\n"
 						+ "4. The player with the highest score wins!");
 
@@ -137,7 +131,7 @@ public class GameView extends Application {
 		BPane.setCenter(rulesRoot);
 		BPane.setStyle("-fx-background-image: url('UIAssets/woodGrain.jpeg'); -fx-background-size: cover;");
 
-		Scene rulesScene = new Scene(BPane, 1300, 800);
+		Scene rulesScene = new Scene(BPane, 1300,  900);
 		primaryStage.setScene(rulesScene);
 		
 
@@ -187,7 +181,7 @@ public class GameView extends Application {
 		BPane.setPadding(new Insets(20));
 		BPane.setCenter(root);
 		BPane.setStyle("-fx-background-image: url('UIAssets/woodGrain.jpeg'); -fx-background-size: cover; ");
-		Scene setupScene = new Scene(BPane, 1300, 800);
+		Scene setupScene = new Scene(BPane, 1300,  900);
 		primaryStage.setScene(setupScene);
 	}
 	
@@ -223,7 +217,7 @@ public class GameView extends Application {
 		BPane.setPadding(new Insets(20));
 		BPane.setCenter(root);
 		BPane.setStyle("-fx-background-image: url('UIAssets/woodGrain.jpeg'); -fx-background-size: cover; ");
-		Scene setupScene = new Scene(BPane, 1300, 800);
+		Scene setupScene = new Scene(BPane, 1300, 900);
 		primaryStage.setScene(setupScene);
 	}
 
@@ -263,7 +257,7 @@ public class GameView extends Application {
 		BPane.setCenter(root);
 		BPane.setStyle("-fx-background-image: url('UIAssets/woodGrain.jpeg'); -fx-background-size: cover; ");
 		
-		Scene SceneGame = new Scene(BPane, 1300, 800);
+		Scene SceneGame = new Scene(BPane, 1300, 900);
 		primaryStage.setScene(SceneGame);
 		
 		game.startsGame();
@@ -282,6 +276,7 @@ public class GameView extends Application {
 			@Override
 			public void handle(ActionEvent e) {
 				buttonPress.play();
+				endMusic.stop();
 				primaryPage();
 			}
 		});
@@ -300,6 +295,7 @@ public class GameView extends Application {
 					gameScreen(new GameManager(playerNumber));
 				}
 
+				endMusic.stop();
 			}
 		});
 		
@@ -327,8 +323,11 @@ public class GameView extends Application {
 		BPane.setCenter(root);
 		BPane.setStyle("-fx-background-image: url('UIAssets/woodGrain.jpeg'); -fx-background-size: cover; ");
 		
-		Scene SceneGame = new Scene(BPane, 1300, 800);
+		Scene SceneGame = new Scene(BPane, 1300,  900);
 		primaryStage.setScene(SceneGame);
+		
+		endMusic.setVolume(0.1);
+		if (!endMusic.isPlaying()) endMusic.play();
 	}
 
 }

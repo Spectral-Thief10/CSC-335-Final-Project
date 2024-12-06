@@ -1,4 +1,5 @@
 //Adapter Class for Scoresheet GUI that implements observer
+package view;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,11 +13,15 @@ import javafx.scene.layout.HBox;
 import javafx.scene.media.AudioClip;
 import model.Dice;
 import model.ScoreSheet;
+import controller.GameManager;
+import controller.Observer;
 
 public class ScoreSheetGUI implements Observer {
 
 	private HashMap<ScoreSheet.Category, Button> map = new HashMap<>();
 	private Label heading;
+	private Label bonus;
+	private Label total;
 	private GridPane gridPane = new GridPane();
 	private int idVal;
 
@@ -88,7 +93,21 @@ public class ScoreSheetGUI implements Observer {
 			map.put(category, categoryButton);
 			gridPane.add(categoryButton, 0, row);
 			row++;
+			if (category == ScoreSheet.Category.SIX) {
+				bonus = new Label("BONUS: 0");
+				bonus.setStyle(
+						"-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white; -fx-padding: 10px; -fx-background-color: black; -fx-font-family: 'Courier New';");
+				bonus.setMinWidth(200);
+				gridPane.add(bonus, 0, row);
+			}
+			row++;
 		}
+		
+		total = new Label("GRAND TOTAL: 0");
+		total.setStyle(
+				"-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white; -fx-padding: 10px; -fx-background-color: black; -fx-font-family: 'Courier New';");
+		total.setMinWidth(200);
+		gridPane.add(total, 0, row);
 
 		gridPane.setGridLinesVisible(true);
 		hbox.getChildren().add(gridPane);
@@ -105,7 +124,10 @@ public class ScoreSheetGUI implements Observer {
 		 */
 		Button label = map.get(category);
 		label.setText(category.toString().replace("_", " ") + ": " + val);
-
+		if (control.getCurrentBonus()) {
+			bonus.setText("BONUS: 35");
+		}
+		total.setText("GRAND TOTAL: " + control.getCurrentTotalScore());
 	}
 
 	public void makeCurrentPlayer() {

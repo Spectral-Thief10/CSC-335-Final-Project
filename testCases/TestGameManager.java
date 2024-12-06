@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 
 import controller.GameManager;
+import javafx.scene.layout.VBox;
 import model.Dice;
 import model.Mode;
 import model.ScoreSheet.Category;
+import view.*;
 
 public class TestGameManager {
 	
@@ -18,19 +20,18 @@ public class TestGameManager {
 	
 	@Test
 	public void testPlayerLogic() {		
-		
 		//checking wrap around
-		assertEquals(gmWithoutCPU.getPlayerIndex(),0);
+		assertEquals(gmWithoutCPU.getPlayerIndex(),1);
 		assertTrue(gmWithoutCPU.nextPlayer());
-		assertEquals(gmWithoutCPU.getPlayerIndex(),0);
+		assertEquals(gmWithoutCPU.getPlayerIndex(),1);
 		
-		assertTrue(gmWithCpuEasy.nextPlayer());
-		assertEquals(gmWithCpuEasy.getPlayerIndex(),1);
 		assertTrue(gmWithCpuEasy.nextPlayer());
 		assertEquals(gmWithCpuEasy.getPlayerIndex(),2);
+		assertTrue(gmWithCpuEasy.nextPlayer());
+		assertEquals(gmWithCpuEasy.getPlayerIndex(),1);
 		
 		assertTrue(gmWithCpuEasy.nextPlayer());
-		assertEquals(gmWithCpuEasy.getPlayerIndex(),0);
+		assertEquals(gmWithCpuEasy.getPlayerIndex(),2);
 		
 		//checks if isDone is running correctly
 		assertTrue(gmWithCpuEasy.updateScore(model.ScoreSheet.Category.CHANCE));
@@ -50,7 +51,7 @@ public class TestGameManager {
 		assertFalse(gmWithCpuEasy.updateScore(model.ScoreSheet.Category.YAHTZEE));
 				
 		assertTrue(gmWithCpuEasy.nextPlayer());
-		assertEquals(gmWithCpuEasy.getPlayerIndex(),0);
+		assertEquals(gmWithCpuEasy.getPlayerIndex(),1);
 		assertEquals(gmWithCpuEasy.getActivePlayers(),2);
 		assertEquals(gmWithCpuEasy.getWonPlayers(),1);
 		
@@ -69,7 +70,7 @@ public class TestGameManager {
 		gmWithCpuEasy.updateScore(model.ScoreSheet.Category.YAHTZEE);
 		
 		assertTrue(gmWithCpuEasy.nextPlayer());
-		assertEquals(gmWithCpuEasy.getPlayerIndex(),0);
+		assertEquals(gmWithCpuEasy.getPlayerIndex(),1);
 		assertEquals(gmWithCpuEasy.getActivePlayers(),1);
 		assertEquals(gmWithCpuEasy.getWonPlayers(),2);
 		
@@ -87,7 +88,7 @@ public class TestGameManager {
 		gmWithCpuEasy.updateScore(model.ScoreSheet.Category.LARGE_STRAIGHT);
 		gmWithCpuEasy.updateScore(model.ScoreSheet.Category.YAHTZEE);
 		
-		assertEquals(gmWithCpuEasy.getPlayerIndex(),0);
+		assertEquals(gmWithCpuEasy.getPlayerIndex(),1);
 		assertFalse(gmWithCpuEasy.nextPlayer());
 		assertEquals(gmWithCpuEasy.getActivePlayers(),0);
 		assertEquals(gmWithCpuEasy.getWonPlayers(),3);

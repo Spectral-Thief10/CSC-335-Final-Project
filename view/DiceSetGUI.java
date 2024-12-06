@@ -1,3 +1,4 @@
+package view;
 import java.util.ArrayList;
 
 import javafx.event.ActionEvent;
@@ -14,6 +15,8 @@ import javafx.scene.media.AudioClip;
 import javafx.scene.text.Font;
 import model.Dice;
 import model.ScoreSheet.Category;
+import controller.GameManager;
+import controller.Observer;
 
 public class DiceSetGUI implements Observer {
 	private static AudioClip diceRoll = new AudioClip("file:UIAssets/diceRoll.mp3");
@@ -66,7 +69,7 @@ public class DiceSetGUI implements Observer {
 		buttonRoll.setFont(Font.font("Times New Roman", 20));
 		buttonRoll.setStyle("-fx-background-color: #FCD060;");
 		buttonRoll.setOnAction(e -> {
-			if (game.canRoll()) {
+			if (game.canRoll() && !game.isCPUTurn()) {
 				diceRoll.play();
 				game.updateDices(rerolls);
 			}
@@ -82,6 +85,13 @@ public class DiceSetGUI implements Observer {
 	}
 	
 	public void update(ArrayList<Dice> result) {
+		// play sound effect
+		if (diceRoll.isPlaying()) {
+			diceRoll.stop();
+		}
+		
+		diceRoll.play();
+		
 		// reset dice row
 		for (int i = 0; i < result.size(); i++) {
 			ImageView diceFace = new ImageView(new Image("UIAssets/dice"+result.get(i).VALUE+".png", 100, 100, true, false));
