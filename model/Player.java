@@ -54,6 +54,10 @@ public class Player {
 	public int getTotalScore() {
 		return scoreSheet.getCurrentScore();
 	}
+	
+	public boolean hasBonus() {
+		return scoreSheet.hasBonus();
+	}
 
 	/*
 	 * This gets all the categories that are left for the player returns
