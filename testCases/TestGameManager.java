@@ -105,9 +105,6 @@ public class TestGameManager {
 		assertTrue(count!=5);
 		
 		gmWithoutCPU.updateDices(shouldReroll);
-		
-		
-
 	}
 	
 	@Test

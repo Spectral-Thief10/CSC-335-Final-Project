@@ -146,22 +146,17 @@ public class GameManager {
 			cpuPlayer.chooseScoreRerolls(diceSet.getResult());
 			
 			// the cpu decides what category to choose and updates it
-			boolean flag = false;
-			ScoreSheet.Category category = cpuPlayer.getCategory();
-			if (category != null) {
-				flag = updateScore(category);
+			ScoreSheet.Category category = cpuPlayer.getCategory();			
+			updateScore(category);
+					
+			boolean playerFlag = nextPlayer();
+			// if next player was successful
+			if (!playerFlag) {
+				changeCurrentPlayer(-100);
+				if (observers.get(-1) != null) GameView.endScreen(this);
+				return false;
 			}
-
-			// if update was successful
-			if (flag) {
-				boolean playerFlag = nextPlayer();
-				// if next player was successful
-				if (!playerFlag) {
-					changeCurrentPlayer(-100);
-					if (observers.get(-1) != null) GameView.endScreen(this);
-					return false;
-				}
-			}
+			
 		} 
 
 		// update the GUI using observers
@@ -375,7 +370,9 @@ public class GameManager {
 		 * @return true if the game is over, false otheriwse
 		 */
 		diceSet.rollDiceAt(rerolls);
-		observers.get(-1).update(getDiceSet());
+		if(observers.get(-1)!=null) {
+			observers.get(-1).update(getDiceSet());
+		}
 
 	}
 }
