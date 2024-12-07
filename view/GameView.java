@@ -67,7 +67,7 @@ public class GameView extends Application {
 		button1.setFont(Font.font("Times New Roman", 20));
 		button1.setStyle("-fx-background-color: #FCD060;");
 		button1.setPrefWidth(250);
-		button1.setOnAction(e -> { buttonPress.play(); rulesPage();});
+		button1.setOnAction(e -> { buttonPress.play(); rulesPage();}); 
 
 		Button button2 = new Button("Singleplayer");
 		button2.setFont(Font.font("Times New Roman", 20));

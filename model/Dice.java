@@ -35,11 +35,24 @@ public final class Dice implements Comparable<Dice> {
     }
 
     public int compareTo(Dice other) {
+       /*
+        * Compares the value of two dice
+        * 
+        * @return 0 if equal
+        *         1 if this dice is greater
+        *         -1 if the other dice is greater
+        */
         return Integer.compare(this.VALUE, other.VALUE);
     }
 
     @Override
     public boolean equals(Object obj) {
+    	 /*
+         * Compares the value of two dice if they are equal
+         * 
+         * @return true if equal value, false is not
+         */
+    	
         // make sure we can actually compare these
         if (obj == null) {
             return false;
@@ -57,6 +70,11 @@ public final class Dice implements Comparable<Dice> {
 
     @Override
     public String toString() {
+      	 /*
+         * For testing
+         * 
+         * @return String of the value of the dice
+         */
         return Integer.toString(this.VALUE);
     }
 }

@@ -1,3 +1,4 @@
+//Adapter Class for DiceSet GUI that implements observer
 package view;
 import java.util.ArrayList;
 
@@ -81,10 +82,19 @@ public class DiceSetGUI implements Observer {
 	}
 	
 	public int getId() {
+		/*
+		 * @return ID of the dice set observer
+		 */
 		return -1;
 	}
 	
 	public void update(ArrayList<Dice> result) {
+		/*
+		 * Updates the dice display with new dice
+		 * 
+		 * @parameter result, the result of a dice roll
+		 */
+		
 		// play sound effect
 		if (diceRoll.isPlaying()) {
 			diceRoll.stop();
@@ -112,6 +122,7 @@ public class DiceSetGUI implements Observer {
 		rerolls = new boolean[] {true, true, true, true, true};
 	}
 	
+	// default for adapter class
 	public void update(Category category, int val) {}
 	public void makeCurrentPlayer() {}
 	public void removeCurrentPlayer() {}
