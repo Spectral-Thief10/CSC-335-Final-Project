@@ -28,6 +28,8 @@ public class EasyMode implements Strategy {
 	 * category is chosen returns Category
 	 * 
 	 * @pre dice.size() == 5
+	 * 
+	 * @return category that the CPU would like to choose
 	 */
 	public Category chooseCategory(ArrayList<Dice> dice) {
 		setDice(dice);

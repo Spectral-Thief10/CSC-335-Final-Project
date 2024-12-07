@@ -131,12 +131,18 @@ public class ScoreSheetGUI implements Observer {
 	}
 
 	public void makeCurrentPlayer() {
+		/*
+		 * Makes the scorecard heading green to indicate current player
+		 */
 		heading.setStyle(
 				"-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white; -fx-padding: 10px; -fx-background-color: green; -fx-font-family: 'Courier New';");
 
 	}
 
 	public void removeCurrentPlayer() {
+		/*
+		 * Makes the scorecard heading black to indicate not currently playing
+		 */
 		heading.setStyle(
 				"-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white; -fx-padding: 10px; -fx-background-color: black; -fx-font-family: 'Courier New';");
 	}

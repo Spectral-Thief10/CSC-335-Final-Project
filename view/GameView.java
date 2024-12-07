@@ -40,6 +40,9 @@ public class GameView extends Application {
 
 	@Override
 	public void start(Stage arg0) throws Exception {
+		/*
+		 * Configure stage
+		 */
 		primaryStage = arg0;
 		primaryPage();
 		primaryStage.show();
@@ -47,10 +50,16 @@ public class GameView extends Application {
 	}
 
 	public static void main(String[] args) {
+		/*
+		 * Launch application
+		 */
 		Application.launch(args);
 	}
 
 	private static void primaryPage() {
+		/*
+		 * Title screen with buttons for looking at the rules and selecting play mode
+		 */
 		BorderPane BPane = new BorderPane();
 		VBox root = new VBox(200);
 		
@@ -63,18 +72,21 @@ public class GameView extends Application {
 		welcomeMsg.setStroke(Color.BLACK);
 		welcomeMsg.setStrokeWidth(1.5);
 
+		// rules button
 		Button button1 = new Button("Rules");
 		button1.setFont(Font.font("Times New Roman", 20));
 		button1.setStyle("-fx-background-color: #FCD060;");
 		button1.setPrefWidth(250);
 		button1.setOnAction(e -> { buttonPress.play(); rulesPage();}); 
 
+		// singleplayer button
 		Button button2 = new Button("Singleplayer");
 		button2.setFont(Font.font("Times New Roman", 20));
 		button2.setStyle("-fx-background-color: #FCD060;");
 		button2.setPrefWidth(250);
 		button2.setOnAction(e -> { buttonPress.play(); titleMusic.stop(); setupScreenSingle();});
 		
+		// multiplayer button
 		Button button3 = new Button("Multiplayer");
 		button3.setFont(Font.font("Times New Roman", 20));
 		button3.setStyle("-fx-background-color: #FCD060;");
@@ -94,13 +106,18 @@ public class GameView extends Application {
 		Scene startingPage = new Scene(BPane, 1300, 900);
 		primaryStage.setScene(startingPage);
 
+		// chill guy music
 		titleMusic.setVolume(0.45);
 		if (!titleMusic.isPlaying()) titleMusic.play();
 	}
 
 	private static void rulesPage() {
+		/*
+		 * Rule page that displays Yahtzee rules
+		 */
 		BorderPane BPane = new BorderPane();
 
+		// javafx text styling gore
 		Text heading = new Text("Yahtzee Rules:");
 		Text rules = new Text(
 				"1. Roll five dice and select the scoring category for each roll.\n2. Pick which dice to keep and reroll the others for a better result.\n"
@@ -138,6 +155,9 @@ public class GameView extends Application {
 	}
 
 	private static void setupScreenSingle() {
+		/*
+		 * Setup screen for single player to choose the difficulty of the CPU
+		 */
 		BorderPane BPane = new BorderPane();
 		VBox root = new VBox(50);
 		HBox modeContainer = new HBox(20);
@@ -149,7 +169,7 @@ public class GameView extends Application {
 		modeLabel.setFont(Font.font("Times New Roman", FontWeight.BOLD, 40));
 		modeLabel.setStyle("-fx-fill: #FFFDD0;");
 		
-		// hard cpu buton
+		// hard cpu buton, assigns mode setting
 		hardButton.setFont(Font.font("Times New Roman", 20));
 		hardButton.setStyle("-fx-background-color: #FCD060;");
 		hardButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -161,7 +181,7 @@ public class GameView extends Application {
 			}
 		});
 		
-		// easy cpu button
+		// easy cpu button, assigns mode setting
 		easyButton.setFont(Font.font("Times New Roman", 20));
 		easyButton.setStyle("-fx-background-color: #FCD060;");
 		easyButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -186,6 +206,9 @@ public class GameView extends Application {
 	}
 	
 	private static void setupScreenMulti() {
+		/*
+		 * Setup screen for multiplayer to choose the number of players
+		 */
 		BorderPane BPane = new BorderPane();
 		VBox root = new VBox(50);
 		HBox buttons = new HBox(20);
@@ -196,6 +219,7 @@ public class GameView extends Application {
 		
 		root.getChildren().addAll(playerLabel, buttons);
 		
+		// create player buttons, sets number of players playing
 		for (int i = 2; i <= 4; i++) {
 			Button b = new Button(i + " Player");
 			b.setFont(Font.font("Times New Roman", 20));
@@ -222,10 +246,14 @@ public class GameView extends Application {
 	}
 
 	private static void gameScreen(GameManager game) {
+		/*
+		 * Main game screen with scoresheet and dice
+		 */
+		
 		BorderPane BPane = new BorderPane();
 		GridPane root = new GridPane();
 		
-		// configure score sheet
+		// configure score sheet, clears scoreRoot 
 		scoreRoot = new HBox();
 		scoreRoot.setAlignment(Pos.CENTER);
 		root.add(scoreRoot, 0, 0);
@@ -239,14 +267,13 @@ public class GameView extends Application {
 		}
 	
 
-		/* DICE DISPLAY LOGIC */
+		// register dice observer
 		VBox diceRoot = new VBox();
 		diceRoot.setPadding(new Insets(10));
 		diceRoot.setSpacing(10);
 		diceRoot.setAlignment(Pos.CENTER);
 		
 		game.registerObserver(-1, new DiceSetGUI(diceRoot, game));
-		/* DICE DISPLAY LOGIC */
 		
 		root.setPadding(new Insets(20));
 		root.setVgap(30);
@@ -264,11 +291,15 @@ public class GameView extends Application {
 	}
 	
 	public static void endScreen(GameManager game) {
+		/*
+		 * End screen, displays winner and final scoresheets
+		 */
 		BorderPane BPane = new BorderPane();
 		VBox root = new VBox(20);
 		
 		HBox buttonBar = new HBox(20);
 		
+		// Main menu button, returns to start page
 		Button button1 = new Button("Main Menu");
 		button1.setFont(Font.font("Times New Roman", 20));
 		button1.setStyle("-fx-background-color: #FCD060;");
@@ -281,6 +312,7 @@ public class GameView extends Application {
 			}
 		});
 		
+		// Play again button, creates a new game with same settings
 		Button button2 = new Button("Play Again");
 		button2.setFont(Font.font("Times New Roman", 20));
 		button2.setStyle("-fx-background-color: #FCD060;");
@@ -301,6 +333,7 @@ public class GameView extends Application {
 		
 		buttonBar.getChildren().addAll(button1, button2);
 		
+		// Display name of winner
 		Text winnerLabel = new Text();
 		if (mode.isPresent()) {
 			if (game.getWinner() == 2) {
@@ -315,6 +348,7 @@ public class GameView extends Application {
 		winnerLabel.setFont(Font.font("Times New Roman", FontWeight.BOLD, 40));
 		winnerLabel.setStyle("-fx-fill: #FFFDD0;");
 		
+		// Attaches completed scoresheets for display as well, stored in scoreRoot
 		root.getChildren().addAll(scoreRoot, winnerLabel, buttonBar);
 		root.setAlignment(Pos.CENTER);
 		buttonBar.setAlignment(Pos.CENTER);

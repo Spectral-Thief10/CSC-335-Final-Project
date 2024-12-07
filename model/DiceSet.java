@@ -16,6 +16,9 @@ public class DiceSet {
     }
 
     public boolean hasResult() {
+    	/*
+    	 * @ return boolean if the dice set contains a roll result
+    	 */
         return dice.size() > 0;
     }
 

@@ -84,6 +84,8 @@ public class HardMode implements Strategy {
 
 	/*
 	 * determines which upper section category to choose returns Category
+	 * 
+	 * @return category that the CPU chose to select
 	 */
 	private Category upperSectionChoice() {
 		int[] numberCounts = this.countsOfNums(diceSet);
@@ -121,6 +123,8 @@ public class HardMode implements Strategy {
 
 	/*
 	 * chooses one of the remaining categories to complete returns Category
+	 * 
+	 * @return category that the CPU chose to select
 	 */
 	private Category chooseRemainingCategory() {
 		ArrayList<Category> left = cpu.categoriesLeft();
@@ -173,6 +177,8 @@ public class HardMode implements Strategy {
 
 	/*
 	 * gets an array of 5 false booleans return boolean[]
+	 * 
+	 * @return dice that the cpu would like to reroll
 	 */
 	private boolean[] resetRerolls() {
 		boolean[] rerolls = { false, false, false, false, false };
